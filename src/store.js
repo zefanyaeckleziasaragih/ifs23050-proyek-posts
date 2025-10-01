@@ -12,7 +12,7 @@ import {
   userReducer,
   isProfileReducer,
 } from "./features/users/states/reducer";
-import * as todoReducer from "./features/todos/states/reducer";
+import * as postReducer from "./features/posts/states/reducer";
 
 const store = configureStore({
   reducer: {
@@ -29,17 +29,17 @@ const store = configureStore({
     isChangeProfilePhoto: isChangeProfilePhotoActionCreator,
     isChangeProfilePassword: isChangeProfilePasswordReducer,
 
-    // Todos reducers
-    todos: todoReducer.todosReducer,
-    todo: todoReducer.todoReducer,
-    isTodo: todoReducer.isTodoReducer,
-    isTodoAdd: todoReducer.isTodoAddReducer,
-    isTodoAdded: todoReducer.isTodoAddedReducer,
-    isTodoChange: todoReducer.isTodoChangeReducer,
-    isTodoChanged: todoReducer.isTodoChangedReducer,
-    isTodoChangeCover: todoReducer.isTodoChangeCoverReducer,
-    isTodoChangedCover: todoReducer.isTodoChangedCoverReducer,
-    isTodoDeleted: todoReducer.isTodoDeletedReducer,
+    // Posts reducers
+    posts: postReducer.postsReducer,
+    post: postReducer.postReducer,
+    isPost: postReducer.isPostReducer,
+    isPostAdd: postReducer.isPostAddReducer,
+    isPostAdded: postReducer.isPostAddedReducer,
+    isPostChange: postReducer.isPostChangeReducer,
+    isPostChanged: postReducer.isPostChangedReducer,
+    isPostChangeCover: postReducer.isPostChangeCoverReducer,
+    isPostChangedCover: postReducer.isPostChangedCoverReducer,
+    isPostDeleted: postReducer.isPostDeletedReducer,
   },
 });
 

@@ -3,17 +3,17 @@ import { useEffect, useState } from "react";
 import { showErrorDialog } from "../../../helpers/toolsHelper";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  asyncSetIsTodoChangeCover,
-  asyncSetTodo,
-  setIsTodoChangeCoverActionCreator,
-  setIsTodoChangedActionCreator,
+  asyncSetIsPostChangeCover,
+  asyncSetPost,
+  setIsPostChangeCoverActionCreator,
+  setIsPostChangedActionCreator,
 } from "../states/action";
 
-function ChangeCoverModal({ show, onClose, todo }) {
+function ChangeCoverModal({ show, onClose, post }) {
   const dispatch = useDispatch();
 
-  const isTodoChangeCover = useSelector((state) => state.isTodoChangeCover);
-  const isTodoChangedCover = useSelector((state) => state.isTodoChangedCover);
+  const isPostChangeCover = useSelector((state) => state.isPostChangeCover);
+  const isPostChangedCover = useSelector((state) => state.isPostChangedCover);
 
   const [loading, setLoading] = useState(false);
   const [fileCover, setFileCover] = useState(null);
@@ -27,18 +27,18 @@ function ChangeCoverModal({ show, onClose, todo }) {
   }, [show]);
 
   useEffect(() => {
-    if (isTodoChangeCover) {
-      dispatch(setIsTodoChangeCoverActionCreator(false));
-      if (isTodoChangedCover) {
-        dispatch(setIsTodoChangedActionCreator(false));
+    if (isPostChangeCover) {
+      dispatch(setIsPostChangeCoverActionCreator(false));
+      if (isPostChangedCover) {
+        dispatch(setIsPostChangedActionCreator(false));
         setLoading(false);
-        dispatch(asyncSetTodo(todo.id));
+        dispatch(asyncSetPost(post.id));
         onClose();
       } else {
         setLoading(false);
       }
     }
-  }, [isTodoChangeCover]);
+  }, [isPostChangeCover]);
 
   // Fungsi save
   function handleSave() {
@@ -64,10 +64,10 @@ function ChangeCoverModal({ show, onClose, todo }) {
     }
 
     setLoading(true);
-    dispatch(asyncSetIsTodoChangeCover(todo.id, fileCover));
+    dispatch(asyncSetIsPostChangeCover(post.id, fileCover));
   }
 
-  if (!todo) return;
+  if (!post) return;
 
   return (
     <AnimatePresence>
@@ -94,7 +94,7 @@ function ChangeCoverModal({ show, onClose, todo }) {
             <div className="modal-dialog">
               <div className="modal-content">
                 <div className="modal-header bg-light">
-                  <h1 className="modal-title fs-5">Ubah Cover Todo</h1>
+                  <h1 className="modal-title fs-5">Ubah Cover Post</h1>
                   <button
                     type="button"
                     className="btn-close"

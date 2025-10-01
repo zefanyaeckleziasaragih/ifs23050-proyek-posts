@@ -5,17 +5,17 @@ import { useState, useEffect } from "react";
 import AddModal from "../modals/AddModal";
 import ChangeModal from "../modals/ChangeModal";
 import {
-  asyncSetIsTodoDelete,
-  asyncSetTodo,
-  asyncSetTodos,
-  setIsTodoActionCreator,
-  setIsTodoDeleteActionCreator,
+  asyncSetIsPostDelete,
+  asyncSetPost,
+  asyncSetPosts,
+  setIsPostActionCreator,
+  setIsPostDeleteActionCreator,
 } from "../states/action";
 import { formatDate, showConfirmDialog } from "../../../helpers/toolsHelper";
 import ChangeCoverModal from "../modals/ChangeCoverModal";
 
 function DetailPage() {
-  const { todoId } = useParams();
+  const { postId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -23,27 +23,27 @@ function DetailPage() {
 
   // Ambil data dari reducer
   const profile = useSelector((state) => state.profile);
-  const todo = useSelector((state) => state.todo);
-  const isTodo = useSelector((state) => state.isTodo);
+  const post = useSelector((state) => state.post);
+  const isPost = useSelector((state) => state.isPost);
 
-  // 1. Ambil data todo sesuai todoId
+  // 1. Ambil data post sesuai postId
   useEffect(() => {
-    if (todoId) {
-      dispatch(asyncSetTodo(todoId));
+    if (postId) {
+      dispatch(asyncSetPost(postId));
     }
-  }, [todoId]);
+  }, [postId]);
 
-  // Periksa apakah pengabilan data todo sudah selesai
+  // Periksa apakah pengabilan data post sudah selesai
   useEffect(() => {
-    if (isTodo) {
-      dispatch(setIsTodoActionCreator(false));
-      if (!todo) {
-        navigate("/todos");
+    if (isPost) {
+      dispatch(setIsPostActionCreator(false));
+      if (!post) {
+        navigate("/posts");
       }
     }
   });
 
-  if (!profile || !todo) return;
+  if (!profile || !post) return;
 
   return (
     <>
@@ -53,8 +53,8 @@ function DetailPage() {
           <div className="d-flex">
             <div className="flex-fill">
               <h2>
-                {todo.title}
-                {todo.is_finished ? (
+                {post.title}
+                {post.is_finished ? (
                   <span className="badge bg-success ms-2">Selesai</span>
                 ) : (
                   <span className="badge bg-warning ms-2">Proses</span>
@@ -75,13 +75,13 @@ function DetailPage() {
 
           <div className="card">
             <div className="card-body">
-              {todo.cover ? (
+              {post.cover ? (
                 <div>
-                  <img width="100%" src={todo.cover} alt="Cover Todo" />
+                  <img width="100%" src={post.cover} alt="Cover Post" />
                 </div>
               ) : null}
 
-              {todo.description}
+              {post.description}
             </div>
           </div>
         </div>
@@ -91,7 +91,7 @@ function DetailPage() {
       <ChangeCoverModal
         show={showChangeCoverModal}
         onClose={() => setShowChangeCoverModal(false)}
-        todo={todo}
+        post={post}
       />
     </>
   );

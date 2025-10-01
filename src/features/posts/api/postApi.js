@@ -1,7 +1,7 @@
 import apiHelper from "../../../helpers/apiHelper";
 
 const postApi = (() => {
-  const BASE_URL = `${DELCOM_BASEURL}/todos`;
+  const BASE_URL = `${DELCOM_BASEURL}/posts`;
   console.log(BASE_URL);
   function _url(path) {
     return BASE_URL + path;

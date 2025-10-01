@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import NavbarComponent from "../components/NavbarComponent";
 import SidebarComponent from "../components/SidebarComponent";
 
-function TodoLayout() {
+function PostLayout() {
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -56,4 +56,4 @@ function TodoLayout() {
   );
 }
 
-export default TodoLayout;
+export default PostLayout;

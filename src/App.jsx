@@ -4,9 +4,9 @@ import { Route, Routes } from "react-router-dom";
 const LoginPage = lazy(() => import("./features/auth/pages/LoginPage"));
 const AuthLayout = lazy(() => import("./features/auth/layouts/AuthLayout"));
 const RegisterPage = lazy(() => import("./features/auth/pages/RegisterPage"));
-const HomePage = lazy(() => import("./features/todos/pages/HomePage"));
-const DetailPage = lazy(() => import("./features/todos/pages/DetailPage"));
-const TodoLayout = lazy(() => import("./features/todos/layouts/TodoLayout"));
+const HomePage = lazy(() => import("./features/posts/pages/HomePage"));
+const DetailPage = lazy(() => import("./features/posts/pages/DetailPage"));
+const PostLayout = lazy(() => import("./features/posts/layouts/PostLayout"));
 
 function App() {
   return (
@@ -36,10 +36,10 @@ function App() {
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
         </Route>
-        {/* Todos */}
-        <Route path="/" element={<TodoLayout />}>
+        {/* Posts */}
+        <Route path="/" element={<PostLayout />}>
           <Route index element={<HomePage />} />
-          <Route path="todos/:todoId" element={<DetailPage />} />
+          <Route path="posts/:postId" element={<DetailPage />} />
         </Route>
       </Routes>
     </Suspense>

@@ -5,9 +5,9 @@ import { useState, useEffect } from "react";
 import AddModal from "../modals/AddModal";
 import ChangeModal from "../modals/ChangeModal";
 import {
-  asyncSetIsTodoDelete,
-  asyncSetTodos,
-  setIsTodoDeleteActionCreator,
+  asyncSetIsPostDelete,
+  asyncSetPosts,
+  setIsPostDeleteActionCreator,
 } from "../states/action";
 import { formatDate, showConfirmDialog } from "../../../helpers/toolsHelper";
 
@@ -17,39 +17,39 @@ function HomePage() {
 
   // Ambil data dari reducer
   const profile = useSelector((state) => state.profile);
-  const todos = useSelector((state) => state.todos);
-  const isTodoDeleted = useSelector((state) => state.isTodoDeleted);
+  const posts = useSelector((state) => state.posts);
+  const isPostDeleted = useSelector((state) => state.isPostDeleted);
 
   const [filter, changeFilter] = useState("");
 
   const [showAddModal, setShowAddModal] = useState(false);
 
   const [showChangeModal, setShowChangeModal] = useState(false);
-  const [selectedTodoId, setSelectedTodoId] = useState(null);
+  const [selectedPostId, setSelectedPostId] = useState(null);
 
-  // Ambil data todos
+  // Ambil data posts
   useEffect(() => {
-    dispatch(asyncSetTodos(filter));
+    dispatch(asyncSetPosts(filter));
   }, [filter]);
 
-  // Jika todo berhasil dihapus, perbarui daftar todos
+  // Jika post berhasil dihapus, perbarui daftar posts
   useEffect(() => {
-    if (isTodoDeleted) {
-      dispatch(setIsTodoDeleteActionCreator(false));
-      dispatch(asyncSetTodos());
+    if (isPostDeleted) {
+      dispatch(setIsPostDeleteActionCreator(false));
+      dispatch(asyncSetPosts());
     }
-  }, [isTodoDeleted]);
+  }, [isPostDeleted]);
 
   if (!profile) return;
 
-  function handleDeleteTodo(todoId) {
+  function handleDeletePost(postId) {
     // Gunakan
     const confirmDelete = showConfirmDialog(
-      "Apakah Anda yakin ingin menghapus todo ini?"
+      "Apakah Anda yakin ingin menghapus post ini?"
     );
     confirmDelete.then((result) => {
       if (result.isConfirmed) {
-        dispatch(asyncSetIsTodoDelete(todoId));
+        dispatch(asyncSetIsPostDelete(postId));
       }
     });
   }
@@ -65,8 +65,8 @@ function HomePage() {
             <div className="col-md-4 mb-4">
               <div className="card bg-primary text-white">
                 <div className="card-body">
-                  <h5 className="card-title">Jumlah Todo</h5>
-                  <h2 className="card-text">{todos.length}</h2>
+                  <h5 className="card-title">Jumlah Post</h5>
+                  <h2 className="card-text">{posts.length}</h2>
                   <i
                     className="bi bi-list-check opacity-50 position-absolute bottom-0 end-0 pe-3"
                     style={{ fontSize: "3rem" }}
@@ -77,9 +77,9 @@ function HomePage() {
             <div className="col-md-4 mb-4">
               <div className="card bg-success text-white">
                 <div className="card-body">
-                  <h5 className="card-title">Todo Selesai</h5>
+                  <h5 className="card-title">Post Selesai</h5>
                   <h2 className="card-text">
-                    {todos.filter((todo) => todo.is_finished).length}
+                    {posts.filter((post) => post.is_finished).length}
                   </h2>
                   <i
                     className="bi bi-check-circle opacity-50 position-absolute bottom-0 end-0 pe-3"
@@ -91,9 +91,9 @@ function HomePage() {
             <div className="col-md-4 mb-4">
               <div className="card bg-warning text-dark">
                 <div className="card-body">
-                  <h5 className="card-title">Todo Proses</h5>
+                  <h5 className="card-title">Post Proses</h5>
                   <h2 className="card-text">
-                    {todos.filter((todo) => !todo.is_finished).length}
+                    {posts.filter((post) => !post.is_finished).length}
                   </h2>
                   <i
                     className="bi bi-hourglass-split opacity-50 position-absolute bottom-0 end-0 pe-3"
@@ -108,7 +108,7 @@ function HomePage() {
             <div className="card-header">
               <div className="d-flex">
                 <div className="flex-fill">
-                  <h4 className="pt-1">Daftar Todo</h4>
+                  <h4 className="pt-1">Daftar Post</h4>
                 </div>
                 <div>
                   <div className="input-group">
@@ -146,26 +146,26 @@ function HomePage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {todos.length === 0 && (
+                  {posts.length === 0 && (
                     <tr>
                       <td colSpan="6" className="text-center">
-                        Belum ada data todo yang tersedia.
+                        Belum ada data post yang tersedia.
                       </td>
                     </tr>
                   )}
-                  {todos.map((todo) => (
-                    <tr key={`todo-${todo.id}`}>
-                      <td className="text-center">{todo.id}</td>
-                      <td>{todo.title}</td>
-                      <td>{formatDate(todo.created_at)}</td>
-                      <td>{formatDate(todo.updated_at)}</td>
+                  {posts.map((post) => (
+                    <tr key={`post-${post.id}`}>
+                      <td className="text-center">{post.id}</td>
+                      <td>{post.title}</td>
+                      <td>{formatDate(post.created_at)}</td>
+                      <td>{formatDate(post.updated_at)}</td>
                       <td>
                         <span
                           className={`badge bg-${
-                            todo.is_finished ? "success" : "warning"
+                            post.is_finished ? "success" : "warning"
                           }`}
                         >
-                          {todo.is_finished ? "Selesai" : "Proses"}
+                          {post.is_finished ? "Selesai" : "Proses"}
                         </span>
                       </td>
                       <td>
@@ -173,14 +173,14 @@ function HomePage() {
                           <button type="button" className="btn btn-info">
                             <i
                               className="bi bi-eye"
-                              onClick={() => navigate(`/todos/${todo.id}`)}
+                              onClick={() => navigate(`/posts/${post.id}`)}
                             ></i>
                           </button>
                           <button
                             type="button"
                             className="btn btn-warning"
                             onClick={() => {
-                              setSelectedTodoId(todo.id);
+                              setSelectedPostId(post.id);
                               setShowChangeModal(true);
                             }}
                           >
@@ -188,7 +188,7 @@ function HomePage() {
                           </button>
                           <button
                             type="button"
-                            onClick={() => handleDeleteTodo(todo.id)}
+                            onClick={() => handleDeletePost(post.id)}
                             className="btn btn-danger"
                           >
                             <i className="bi bi-trash"></i>
@@ -209,7 +209,7 @@ function HomePage() {
       <ChangeModal
         show={showChangeModal}
         onClose={() => setShowChangeModal(false)}
-        todoId={selectedTodoId}
+        postId={selectedPostId}
       />
     </>
   );

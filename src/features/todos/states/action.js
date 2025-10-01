@@ -2,175 +2,175 @@ import {
   showErrorDialog,
   showSuccessDialog,
 } from "../../../helpers/toolsHelper";
-import todoApi from "../api/todoApi";
+import postApi from "../api/postApi";
 
 export const ActionType = {
-  SET_TODOS: "SET_TODOS",
-  SET_TODO: "SET_TODO",
-  SET_IS_TODO: "SET_IS_TODO",
-  SET_IS_TODO_ADD: "SET_IS_TODO_ADD",
-  SET_IS_TODO_ADDED: "SET_IS_TODO_ADDED",
-  SET_IS_TODO_CHANGE: "SET_IS_TODO_CHANGE",
-  SET_IS_TODO_CHANGED: "SET_IS_TODO_CHANGED",
-  SET_IS_TODO_CHANGE_COVER: "SET_IS_TODO_CHANGE_COVER",
-  SET_IS_TODO_CHANGED_COVER: "SET_IS_TODO_CHANGED_COVER",
-  SET_IS_TODO_DELETE: "SET_IS_TODO_DELETE",
-  SET_IS_TODO_DELETED: "SET_IS_TODO_DELETED",
+  SET_POSTS: "SET_POSTS",
+  SET_POST: "SET_POST",
+  SET_IS_POST: "SET_IS_POST",
+  SET_IS_POST_ADD: "SET_IS_POST_ADD",
+  SET_IS_POST_ADDED: "SET_IS_POST_ADDED",
+  SET_IS_POST_CHANGE: "SET_IS_POST_CHANGE",
+  SET_IS_POST_CHANGED: "SET_IS_POST_CHANGED",
+  SET_IS_POST_CHANGE_COVER: "SET_IS_POST_CHANGE_COVER",
+  SET_IS_POST_CHANGED_COVER: "SET_IS_POST_CHANGED_COVER",
+  SET_IS_POST_DELETE: "SET_IS_POST_DELETE",
+  SET_IS_POST_DELETED: "SET_IS_POST_DELETED",
 };
 
-export function setTodosActionCreator(todos) {
+export function setPostsActionCreator(posts) {
   return {
-    type: ActionType.SET_TODOS,
-    payload: todos,
+    type: ActionType.SET_POSTS,
+    payload: posts,
   };
 }
 
-export function asyncSetTodos(is_finished = "") {
+export function asyncSetPosts(is_finished = "") {
   return async (dispatch) => {
     try {
-      const todos = await todoApi.getTodos(is_finished);
-      dispatch(setTodosActionCreator(todos));
+      const posts = await postApi.getPosts(is_finished);
+      dispatch(setPostsActionCreator(posts));
     } catch (error) {
-      dispatch(setTodosActionCreator([]));
+      dispatch(setPostsActionCreator([]));
     }
   };
 }
 
-export function setTodoActionCreator(todo) {
+export function setPostActionCreator(post) {
   return {
-    type: ActionType.SET_TODO,
-    payload: todo,
+    type: ActionType.SET_POST,
+    payload: post,
   };
 }
 
-export function setIsTodoActionCreator(status) {
+export function setIsPostActionCreator(status) {
   return {
-    type: ActionType.SET_IS_TODO,
+    type: ActionType.SET_IS_POST,
     payload: status,
   };
 }
 
-export function asyncSetTodo(todoId) {
+export function asyncSetPost(postId) {
   return async (dispatch) => {
     try {
-      const todo = await todoApi.getTodoById(todoId);
-      dispatch(setTodoActionCreator(todo));
+      const post = await postApi.getPostById(postId);
+      dispatch(setPostActionCreator(post));
     } catch (error) {
-      dispatch(setTodoActionCreator(null));
+      dispatch(setPostActionCreator(null));
     }
-    dispatch(setIsTodoActionCreator(true));
+    dispatch(setIsPostActionCreator(true));
   };
 }
 
-export function setIsTodoAddActionCreator(isTodoAdd) {
+export function setIsPostAddActionCreator(isPostAdd) {
   return {
-    type: ActionType.SET_IS_TODO_ADD,
-    payload: isTodoAdd,
+    type: ActionType.SET_IS_POST_ADD,
+    payload: isPostAdd,
   };
 }
 
-export function setIsTodoAddedActionCreator(isTodoAdded) {
+export function setIsPostAddedActionCreator(isPostAdded) {
   return {
-    type: ActionType.SET_IS_TODO_ADDED,
-    payload: isTodoAdded,
+    type: ActionType.SET_IS_POST_ADDED,
+    payload: isPostAdded,
   };
 }
 
-export function asyncSetIsTodoAdd(title, description) {
+export function asyncSetIsPostAdd(title, description) {
   return async (dispatch) => {
     try {
-      await todoApi.postTodo(title, description);
-      dispatch(setIsTodoAddedActionCreator(true));
+      await postApi.postPost(title, description);
+      dispatch(setIsPostAddedActionCreator(true));
     } catch (error) {
       showErrorDialog(error.message);
-      dispatch(setIsTodoAddedActionCreator(false));
+      dispatch(setIsPostAddedActionCreator(false));
     }
-    dispatch(setIsTodoAddActionCreator(true));
+    dispatch(setIsPostAddActionCreator(true));
   };
 }
 
-export function setIsTodoChangeActionCreator(isTodoChange) {
+export function setIsPostChangeActionCreator(isPostChange) {
   return {
-    type: ActionType.SET_IS_TODO_CHANGE,
-    payload: isTodoChange,
+    type: ActionType.SET_IS_POST_CHANGE,
+    payload: isPostChange,
   };
 }
 
-export function setIsTodoChangedActionCreator(isTodoChanged) {
+export function setIsPostChangedActionCreator(isPostChanged) {
   return {
-    type: ActionType.SET_IS_TODO_CHANGED,
-    payload: isTodoChanged,
+    type: ActionType.SET_IS_POST_CHANGED,
+    payload: isPostChanged,
   };
 }
 
-export function asyncSetIsTodoChange(todoId, title, description, is_finished) {
+export function asyncSetIsPostChange(postId, title, description, is_finished) {
   return async (dispatch) => {
     try {
-      const message = await todoApi.putTodo(
-        todoId,
+      const message = await postApi.putPost(
+        postId,
         title,
         description,
         is_finished
       );
       showSuccessDialog(message);
-      dispatch(setIsTodoChangedActionCreator(true));
+      dispatch(setIsPostChangedActionCreator(true));
     } catch (error) {
       showErrorDialog(error.message);
     }
-    dispatch(setIsTodoChangeActionCreator(true));
+    dispatch(setIsPostChangeActionCreator(true));
   };
 }
 
-export function setIsTodoChangeCoverActionCreator(isTodoChangeCover) {
+export function setIsPostChangeCoverActionCreator(isPostChangeCover) {
   return {
-    type: ActionType.SET_IS_TODO_CHANGE_COVER,
-    payload: isTodoChangeCover,
+    type: ActionType.SET_IS_POST_CHANGE_COVER,
+    payload: isPostChangeCover,
   };
 }
 
-export function setIsTodoChangedCoverActionCreator(status) {
+export function setIsPostChangedCoverActionCreator(status) {
   return {
-    type: ActionType.SET_IS_TODO_CHANGED_COVER,
+    type: ActionType.SET_IS_POST_CHANGED_COVER,
     payload: status,
   };
 }
 
-export function asyncSetIsTodoChangeCover(todoId, cover) {
+export function asyncSetIsPostChangeCover(postId, cover) {
   return async (dispatch) => {
     try {
-      const message = await todoApi.postTodoCover(todoId, cover);
+      const message = await postApi.postPostCover(postId, cover);
       showSuccessDialog(message);
-      dispatch(setIsTodoChangedCoverActionCreator(true));
+      dispatch(setIsPostChangedCoverActionCreator(true));
     } catch (error) {
       showErrorDialog(error.message);
     }
-    dispatch(setIsTodoChangeCoverActionCreator(true));
+    dispatch(setIsPostChangeCoverActionCreator(true));
   };
 }
 
-export function setIsTodoDeleteActionCreator(isTodoDelete) {
+export function setIsPostDeleteActionCreator(isPostDelete) {
   return {
-    type: ActionType.SET_IS_TODO_DELETE,
-    payload: isTodoDelete,
+    type: ActionType.SET_IS_POST_DELETE,
+    payload: isPostDelete,
   };
 }
 
-export function setIsTodoDeletedActionCreator(isTodoDeleted) {
+export function setIsPostDeletedActionCreator(isPostDeleted) {
   return {
-    type: ActionType.SET_IS_TODO_DELETED,
-    payload: isTodoDeleted,
+    type: ActionType.SET_IS_POST_DELETED,
+    payload: isPostDeleted,
   };
 }
 
-export function asyncSetIsTodoDelete(todoId) {
+export function asyncSetIsPostDelete(postId) {
   return async (dispatch) => {
     try {
-      const message = await todoApi.deleteTodo(todoId);
+      const message = await postApi.deletePost(postId);
       showSuccessDialog(message);
-      dispatch(setIsTodoDeletedActionCreator(true));
+      dispatch(setIsPostDeletedActionCreator(true));
     } catch (error) {
       showErrorDialog(error.message);
     }
-    dispatch(setIsTodoDeleteActionCreator(true));
+    dispatch(setIsPostDeleteActionCreator(true));
   };
 }

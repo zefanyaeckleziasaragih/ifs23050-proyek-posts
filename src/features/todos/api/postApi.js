@@ -1,13 +1,13 @@
 import apiHelper from "../../../helpers/apiHelper";
 
-const todoApi = (() => {
+const postApi = (() => {
   const BASE_URL = `${DELCOM_BASEURL}/todos`;
-
+  console.log(BASE_URL);
   function _url(path) {
     return BASE_URL + path;
   }
 
-  async function postTodo(title, description) {
+  async function postPost(title, description) {
     const response = await apiHelper.fetchData(_url("/"), {
       method: "POST",
       headers: {
@@ -27,10 +27,10 @@ const todoApi = (() => {
     return data;
   }
 
-  async function postTodoCover(todoId, cover) {
+  async function postPostCover(postId, cover) {
     const formData = new FormData();
     formData.append("cover", cover, cover.name);
-    const response = await apiHelper.fetchData(_url(`/${todoId}/cover`), {
+    const response = await apiHelper.fetchData(_url(`/${postId}/cover`), {
       method: "POST",
       body: formData,
     });
@@ -43,8 +43,8 @@ const todoApi = (() => {
     return message;
   }
 
-  async function putTodo(todoId, title, description, is_finished) {
-    const response = await apiHelper.fetchData(_url(`/${todoId}`), {
+  async function putPost(postId, title, description, is_finished) {
+    const response = await apiHelper.fetchData(_url(`/${postId}`), {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -64,7 +64,7 @@ const todoApi = (() => {
     return message;
   }
 
-  async function getTodos(is_finished = "") {
+  async function getPosts(is_finished = "") {
     const targetUrl = is_finished ? `/?is_finished=${is_finished}` : "/";
 
     const response = await apiHelper.fetchData(_url(targetUrl), {
@@ -76,11 +76,11 @@ const todoApi = (() => {
       throw new Error(message);
     }
 
-    return data.todos || [];
+    return data.posts || [];
   }
 
-  async function getTodoById(todoId) {
-    const response = await apiHelper.fetchData(_url(`/${todoId}`), {
+  async function getPostById(postId) {
+    const response = await apiHelper.fetchData(_url(`/${postId}`), {
       method: "GET",
     });
 
@@ -89,11 +89,11 @@ const todoApi = (() => {
       throw new Error(message);
     }
 
-    return data.todo;
+    return data.post;
   }
 
-  async function deleteTodo(todoId) {
-    const response = await apiHelper.fetchData(_url(`/${todoId}`), {
+  async function deletePost(postId) {
+    const response = await apiHelper.fetchData(_url(`/${postId}`), {
       method: "DELETE",
     });
 
@@ -106,13 +106,13 @@ const todoApi = (() => {
   }
 
   return {
-    postTodo,
-    postTodoCover,
-    putTodo,
-    getTodos,
-    getTodoById,
-    deleteTodo,
+    postPost,
+    postPostCover,
+    putPost,
+    getPosts,
+    getPostById,
+    deletePost,
   };
 })();
 
-export default todoApi;
+export default postApi;

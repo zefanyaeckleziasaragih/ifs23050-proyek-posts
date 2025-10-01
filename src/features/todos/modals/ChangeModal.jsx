@@ -4,20 +4,20 @@ import useInput from "../../../hooks/useInput";
 import { showErrorDialog } from "../../../helpers/toolsHelper";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  asyncSetIsTodoChange,
-  asyncSetTodo,
-  asyncSetTodos,
-  setIsTodoChangeActionCreator,
-  setIsTodoChangedActionCreator,
+  asyncSetIsPostChange,
+  asyncSetPost,
+  asyncSetPosts,
+  setIsPostChangeActionCreator,
+  setIsPostChangedActionCreator,
 } from "../states/action";
 
-function ChangeModal({ show, onClose, todoId }) {
+function ChangeModal({ show, onClose, postId }) {
   const dispatch = useDispatch();
 
   // State dari reducer
-  const isTodoChange = useSelector((state) => state.isTodoChange);
-  const isTodoChanged = useSelector((state) => state.isTodoChanged);
-  const todo = useSelector((state) => state.todo);
+  const isPostChange = useSelector((state) => state.isPostChange);
+  const isPostChanged = useSelector((state) => state.isPostChanged);
+  const post = useSelector((state) => state.post);
 
   const [loading, setLoading] = useState(false);
 
@@ -25,35 +25,35 @@ function ChangeModal({ show, onClose, todoId }) {
   const [description, changeDescription] = useState("");
   const [isFinished, changeIsFinished] = useState(false);
 
-  // 1. Ambil data todo sesuai todoId
+  // 1. Ambil data post sesuai postId
   useEffect(() => {
-    if (todoId) {
-      dispatch(asyncSetTodo(todoId));
+    if (postId) {
+      dispatch(asyncSetPost(postId));
     }
-  }, [todoId]);
+  }, [postId]);
 
   // 2. Ubah nilai pada input
   useEffect(() => {
-    if (todo) {
-      changeTitle(todo.title);
-      changeDescription(todo.description);
-      changeIsFinished(todo.is_finished);
+    if (post) {
+      changeTitle(post.title);
+      changeDescription(post.description);
+      changeIsFinished(post.is_finished);
     }
-  }, [todo]);
+  }, [post]);
 
-  // 3. Cek apakah isTodoChange sudah selesai
+  // 3. Cek apakah isPostChange sudah selesai
   useEffect(() => {
-    if (isTodoChange) {
+    if (isPostChange) {
       setLoading(false);
-      dispatch(setIsTodoChangeActionCreator(false));
-      if (isTodoChanged) {
-        dispatch(setIsTodoChangedActionCreator(false));
-        // perbarui data todos
-        dispatch(asyncSetTodos());
+      dispatch(setIsPostChangeActionCreator(false));
+      if (isPostChanged) {
+        dispatch(setIsPostChangedActionCreator(false));
+        // perbarui data posts
+        dispatch(asyncSetPosts());
         onClose();
       }
     }
-  }, [isTodoChange]);
+  }, [isPostChange]);
 
   useEffect(() => {
     if (show) {
@@ -76,10 +76,10 @@ function ChangeModal({ show, onClose, todoId }) {
     }
 
     setLoading(true);
-    dispatch(asyncSetIsTodoChange(todoId, title, description, isFinished));
+    dispatch(asyncSetIsPostChange(postId, title, description, isFinished));
   }
 
-  if (!todo) return;
+  if (!post) return;
 
   return (
     <AnimatePresence>
@@ -106,7 +106,7 @@ function ChangeModal({ show, onClose, todoId }) {
             <div className="modal-dialog">
               <div className="modal-content">
                 <div className="modal-header bg-light">
-                  <h1 className="modal-title fs-5">Ubah Todo</h1>
+                  <h1 className="modal-title fs-5">Ubah Post</h1>
                   <button
                     type="button"
                     className="btn-close"

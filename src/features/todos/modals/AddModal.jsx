@@ -4,37 +4,37 @@ import useInput from "../../../hooks/useInput";
 import { showErrorDialog } from "../../../helpers/toolsHelper";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  asyncSetIsTodoAdd,
-  asyncSetTodos,
-  setIsTodoAddActionCreator,
-  setIsTodoAddedActionCreator,
+  asyncSetIsPostAdd,
+  asyncSetPosts,
+  setIsPostAddActionCreator,
+  setIsPostAddedActionCreator,
 } from "../states/action";
 
 function AddModal({ show, onClose }) {
   const dispatch = useDispatch();
 
   // State dari reducer
-  const isTodoAdd = useSelector((state) => state.isTodoAdd);
-  const isTodoAdded = useSelector((state) => state.isTodoAdded);
+  const isPostAdd = useSelector((state) => state.isPostAdd);
+  const isPostAdded = useSelector((state) => state.isPostAdded);
 
   const [loading, setLoading] = useState(false);
 
   const [title, changeTitle] = useInput("");
   const [description, changeDescription] = useInput("");
 
-  // 1. Cek apakah isTodoAdd sudah selesai
+  // 1. Cek apakah isPostAdd sudah selesai
   useEffect(() => {
-    if (isTodoAdd) {
+    if (isPostAdd) {
       setLoading(false);
-      dispatch(setIsTodoAddActionCreator(false));
-      if (isTodoAdded) {
-        dispatch(setIsTodoAddedActionCreator(false));
-        // perbarui data todos
-        dispatch(asyncSetTodos());
+      dispatch(setIsPostAddActionCreator(false));
+      if (isPostAdded) {
+        dispatch(setIsPostAddedActionCreator(false));
+        // perbarui data posts
+        dispatch(asyncSetPosts());
         onClose();
       }
     }
-  }, [isTodoAdd]);
+  }, [isPostAdd]);
 
   useEffect(() => {
     if (show) {
@@ -57,7 +57,7 @@ function AddModal({ show, onClose }) {
     }
 
     setLoading(true);
-    dispatch(asyncSetIsTodoAdd(title, description));
+    dispatch(asyncSetIsPostAdd(title, description));
   }
 
   return (
@@ -85,7 +85,7 @@ function AddModal({ show, onClose }) {
             <div className="modal-dialog">
               <div className="modal-content">
                 <div className="modal-header bg-light">
-                  <h1 className="modal-title fs-5">Tambah Todo</h1>
+                  <h1 className="modal-title fs-5">Tambah Post</h1>
                   <button
                     type="button"
                     className="btn-close"

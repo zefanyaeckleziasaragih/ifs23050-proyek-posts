@@ -21,7 +21,7 @@ function ChangeModal({ show, onClose, postId }) {
 
   const [loading, setLoading] = useState(false);
 
-  const [title, changeTitle] = useState("");
+  const [title, changeCover] = useState("");
   const [description, changeDescription] = useState("");
   const [isFinished, changeIsFinished] = useState(false);
 
@@ -35,7 +35,7 @@ function ChangeModal({ show, onClose, postId }) {
   // 2. Ubah nilai pada input
   useEffect(() => {
     if (post) {
-      changeTitle(post.title);
+      changeCover(post.title);
       changeDescription(post.description);
       changeIsFinished(post.is_finished);
     }
@@ -120,7 +120,7 @@ function ChangeModal({ show, onClose, postId }) {
                     <input
                       type="text"
                       value={title}
-                      onChange={(e) => changeTitle(e.target.value)}
+                      onChange={(e) => changeCover(e.target.value)}
                       className="form-control"
                     />
                   </div>

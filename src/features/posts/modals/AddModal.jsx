@@ -19,7 +19,7 @@ function AddModal({ show, onClose }) {
 
   const [loading, setLoading] = useState(false);
 
-  const [title, changeTitle] = useInput("");
+  const [title, changeCover] = useInput("");
   const [description, changeDescription] = useInput("");
 
   // 1. Cek apakah isPostAdd sudah selesai
@@ -95,10 +95,10 @@ function AddModal({ show, onClose }) {
                 </div>
                 <div className="modal-body">
                   <div className="mb-3">
-                    <label className="form-label">Judul</label>
+                    <label className="form-label">Cover</label>
                     <input
-                      type="text"
-                      onChange={changeTitle}
+                      type="file"
+                      onChange={changeCover}
                       className="form-control"
                     />
                   </div>

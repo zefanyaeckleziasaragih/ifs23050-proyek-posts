@@ -7,16 +7,17 @@ const postApi = (() => {
     return BASE_URL + path;
   }
 
-  async function postPost(title, description) {
+  async function postPost(cover, description) {
+    const formData = new FormData();
+    if (cover) {
+      formData.append("cover", cover, cover.name);
+    }
+    if (typeof description === "string") {
+      formData.append("description", description);
+    }
     const response = await apiHelper.fetchData(_url("/"), {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title,
-        description,
-      }),
+      body: formData,
     });
 
     const { success, message, data } = await response.json();
@@ -43,14 +44,14 @@ const postApi = (() => {
     return message;
   }
 
-  async function putPost(postId, title, description, is_finished) {
+  async function putPost(postId, cover, description, is_finished) {
     const response = await apiHelper.fetchData(_url(`/${postId}`), {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        title,
+        cover,
         description,
         is_finished,
       }),

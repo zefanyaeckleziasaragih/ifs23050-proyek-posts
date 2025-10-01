@@ -76,10 +76,10 @@ export function setIsPostAddedActionCreator(isPostAdded) {
   };
 }
 
-export function asyncSetIsPostAdd(title, description) {
+export function asyncSetIsPostAdd(cover, description) {
   return async (dispatch) => {
     try {
-      await postApi.postPost(title, description);
+      await postApi.postPost(cover, description);
       dispatch(setIsPostAddedActionCreator(true));
     } catch (error) {
       showErrorDialog(error.message);
@@ -103,12 +103,12 @@ export function setIsPostChangedActionCreator(isPostChanged) {
   };
 }
 
-export function asyncSetIsPostChange(postId, title, description, is_finished) {
+export function asyncSetIsPostChange(postId, cover, description, is_finished) {
   return async (dispatch) => {
     try {
       const message = await postApi.putPost(
         postId,
-        title,
+        cover,
         description,
         is_finished
       );

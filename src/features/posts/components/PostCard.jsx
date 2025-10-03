@@ -1,22 +1,37 @@
 // src/components/PostCard.jsx
 
-import React from "react";
-import { formatDate } from "../../../helpers/toolsHelper"; // Path ini sudah benar
+import React, { useState } from "react";
+import { formatDate } from "../../../helpers/toolsHelper";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 function PostCard({ post, profile, onView, onEdit, onDelete }) {
+  const navigate = useNavigate(); // Use useNavigate hook
   const { id, title, description, cover_url, created_at, is_finished } = post;
 
-  const username = profile?.username || "Pengguna";
-  const profilePicture =
-    profile?.profile_picture_url || "https://via.placeholder.com/50";
+  // State baru untuk Like
+  // Asumsi data post tidak memiliki is_liked atau like_count dari API untuk demo
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+
+  const handleLikeToggle = () => {
+    setIsLiked((prev) => !prev);
+    setLikeCount((prev) => prev + (isLiked ? -1 : 1));
+  };
+
+  const username = post?.author.name || "Pengguna";
+  const profilePicture = profile?.photo || "https://via.placeholder.com/50";
 
   const shortDescription =
     description.length > 100
       ? description.substring(0, 100) + "..."
       : description;
 
-  // Variabel statusBadge dihilangkan karena tidak digunakan
+  const handleCommentClick = () => {
+    // Navigasi ke halaman komentar yang baru dibuat
+    navigate(`/posts/${id}/comments`);
+  };
 
+  // --- Tampilan PostCard ---
   return (
     <div className="card shadow-sm mb-4 border rounded-3">
       {/* Header Post (User Info) */}
@@ -32,7 +47,6 @@ function PostCard({ post, profile, onView, onEdit, onDelete }) {
           <small className="text-muted">{formatDate(created_at)}</small>
         </div>
 
-        {/* Badge Status telah dihapus dari sini */}
         <div className="dropdown">
           <button
             className="btn btn-sm btn-light p-0"
@@ -43,7 +57,6 @@ function PostCard({ post, profile, onView, onEdit, onDelete }) {
             <i className="bi bi-three-dots-vertical"></i>
           </button>
           <ul className="dropdown-menu dropdown-menu-end">
-            {/* OPSI: Tambahkan status di sini jika perlu. Jika tidak, biarkan daftar aksi saja. */}
             <li>
               <span className="dropdown-item fw-bold text-muted">
                 Status: {is_finished ? "Selesai" : "Proses"}
@@ -76,7 +89,7 @@ function PostCard({ post, profile, onView, onEdit, onDelete }) {
 
       {/* Gambar Postingan */}
       <img
-        src={cover_url || "https://via.placeholder.com/600x400?text=No+Image"}
+        src={post.cover || "https://via.placeholder.com/600x400?text=No+Image"}
         className="card-img-top"
         alt={title}
         style={{
@@ -87,16 +100,25 @@ function PostCard({ post, profile, onView, onEdit, onDelete }) {
       />
 
       <div className="card-body p-3">
-        {/* Aksi (Hanya Like/Comment) */}
-        <div className="d-flex justify-content-between align-items-center mb-2">
-          {/* Ikon share (pesawat kertas) telah dihapus */}
-          <div className="d-flex gap-3">
-            <i className="bi bi-heart fs-4 cursor-pointer"></i>
-            <i className="bi bi-chat fs-4 cursor-pointer"></i>
-          </div>
+        {/* Aksi (Like Toggable & Comment Link) */}
+        <div className="d-flex justify-content-start gap-3 mb-2">
+          {/* Tombol Like yang Toggable */}
+          <i
+            className={`fs-4 cursor-pointer ${
+              isLiked ? "bi bi-heart-fill text-danger" : "bi bi-heart"
+            }`}
+            onClick={handleLikeToggle}
+          ></i>
 
-          {/* Badge status yang ada di pojok kanan bawah ikon interaksi telah dihapus */}
+          {/* Ikon Komentar yang navigasi ke CommentPage */}
+          <i
+            className="bi bi-chat fs-4 cursor-pointer"
+            onClick={handleCommentClick}
+          ></i>
         </div>
+
+        {/* Like Count */}
+        <p className="fw-bold mb-1">{likeCount} Suka</p>
 
         {/* Deskripsi */}
         <p className="card-text mb-1">

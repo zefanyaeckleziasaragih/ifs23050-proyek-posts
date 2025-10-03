@@ -10,6 +10,7 @@ import {
   setIsPostDeleteActionCreator,
 } from "../states/action";
 import { formatDate, showConfirmDialog } from "../../../helpers/toolsHelper";
+import PostCard from "../components/PostCard"; // Komponen baru untuk tampilan post
 
 function HomePage() {
   const dispatch = useDispatch();
@@ -36,14 +37,14 @@ function HomePage() {
   useEffect(() => {
     if (isPostDeleted) {
       dispatch(setIsPostDeleteActionCreator(false));
-      dispatch(asyncSetPosts());
+      // Menggunakan filter saat memuat ulang jika ada filter yang aktif
+      dispatch(asyncSetPosts(filter));
     }
   }, [isPostDeleted]);
 
   if (!profile) return;
 
   function handleDeletePost(postId) {
-    // Gunakan
     const confirmDelete = showConfirmDialog(
       "Apakah Anda yakin ingin menghapus post ini?"
     );
@@ -54,13 +55,19 @@ function HomePage() {
     });
   }
 
+  function handleEditPost(postId) {
+    setSelectedPostId(postId);
+    setShowChangeModal(true);
+  }
+
   return (
     <>
-      {/* <!-- Main Content --> */}
+      {/* */}
       <div className="main-content">
         <div className="container-fluid mt-3">
           <h2>Beranda</h2>
           <hr />
+          {/* Bagian Ringkasan Tetap Sama */}
           <div className="row">
             <div className="col-md-4 mb-4">
               <div className="card bg-primary text-white">
@@ -103,14 +110,16 @@ function HomePage() {
               </div>
             </div>
           </div>
+          {/* --- */}
 
-          <div className="card">
+          {/* Bagian Filter dan Tombol Tambah */}
+          <div className="card mb-4">
             <div className="card-header">
-              <div className="d-flex">
+              <div className="d-flex align-items-center">
                 <div className="flex-fill">
                   <h4 className="pt-1">Daftar Post</h4>
                 </div>
-                <div>
+                <div className="d-flex gap-2">
                   <div className="input-group">
                     <span className="input-group-text">Filter</span>
                     <select
@@ -122,83 +131,39 @@ function HomePage() {
                       <option value="1">Selesai</option>
                       <option value="0">Proses</option>
                     </select>
-                    <button
-                      type="button"
-                      className="btn btn-primary"
-                      onClick={() => setShowAddModal(true)}
-                    >
-                      <i className="bi bi-plus"></i> Tambah
-                    </button>
                   </div>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={() => setShowAddModal(true)}
+                  >
+                    <i className="bi bi-plus"></i> Tambah Post
+                  </button>
                 </div>
               </div>
             </div>
-            <div className="card-body p-0">
-              <table className="table table-striped table-bordered">
-                <thead>
-                  <tr>
-                    <th className="text-center">ID</th>
-                    <th>Judul</th>
-                    <th>Tanggal Dibuat</th>
-                    <th>Tanggal Diubah</th>
-                    <th>Status</th>
-                    <th>Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {posts.length === 0 && (
-                    <tr>
-                      <td colSpan="6" className="text-center">
-                        Belum ada data post yang tersedia.
-                      </td>
-                    </tr>
-                  )}
-                  {posts.map((post) => (
-                    <tr key={`post-${post.id}`}>
-                      <td className="text-center">{post.id}</td>
-                      <td>{post.title}</td>
-                      <td>{formatDate(post.created_at)}</td>
-                      <td>{formatDate(post.updated_at)}</td>
-                      <td>
-                        <span
-                          className={`badge bg-${
-                            post.is_finished ? "success" : "warning"
-                          }`}
-                        >
-                          {post.is_finished ? "Selesai" : "Proses"}
-                        </span>
-                      </td>
-                      <td>
-                        <div className="d-flex gap-2">
-                          <button type="button" className="btn btn-info">
-                            <i
-                              className="bi bi-eye"
-                              onClick={() => navigate(`/posts/${post.id}`)}
-                            ></i>
-                          </button>
-                          <button
-                            type="button"
-                            className="btn btn-warning"
-                            onClick={() => {
-                              setSelectedPostId(post.id);
-                              setShowChangeModal(true);
-                            }}
-                          >
-                            <i className="bi bi-pencil"></i>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDeletePost(post.id)}
-                            className="btn btn-danger"
-                          >
-                            <i className="bi bi-trash"></i>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          </div>
+          {/* --- */}
+
+          {/* Bagian Tampilan Postingan ala Instagram */}
+          <div className="row justify-content-center">
+            {posts.length === 0 && (
+              <div className="col-12 text-center py-5">
+                <p className="lead">Belum ada data post yang tersedia.</p>
+              </div>
+            )}
+
+            <div className="col-lg-6 col-md-8">
+              {posts.map((post) => (
+                <PostCard
+                  key={`post-${post.id}`}
+                  post={post}
+                  profile={profile}
+                  onView={() => navigate(`/posts/${post.id}`)}
+                  onEdit={() => handleEditPost(post.id)}
+                  onDelete={() => handleDeletePost(post.id)}
+                />
+              ))}
             </div>
           </div>
         </div>

@@ -19,7 +19,7 @@ function AddModal({ show, onClose }) {
 
   const [loading, setLoading] = useState(false);
 
-  const [title, changeCover] = useInput("");
+  const [cover, setCover] = useState(null);
   const [description, changeDescription] = useInput("");
 
   // 1. Cek apakah isPostAdd sudah selesai
@@ -46,7 +46,7 @@ function AddModal({ show, onClose }) {
 
   // Fungsi save
   function handleSave() {
-    if (!title) {
+    if (!cover) {
       showErrorDialog("Judul tidak boleh kosong");
       return;
     }
@@ -57,7 +57,7 @@ function AddModal({ show, onClose }) {
     }
 
     setLoading(true);
-    dispatch(asyncSetIsPostAdd(title, description));
+    dispatch(asyncSetIsPostAdd(cover, description));
   }
 
   return (
@@ -85,7 +85,7 @@ function AddModal({ show, onClose }) {
             <div className="modal-dialog">
               <div className="modal-content">
                 <div className="modal-header bg-light">
-                  <h1 className="modal-title fs-5">Tambah Post</h1>
+                  <h1 className="modal-cover fs-5">Tambah Post</h1>
                   <button
                     type="button"
                     className="btn-close"
@@ -98,7 +98,7 @@ function AddModal({ show, onClose }) {
                     <label className="form-label">Cover</label>
                     <input
                       type="file"
-                      onChange={changeCover}
+                      onChange={(e) => setCover(e.target.files?.[0] || null)}
                       className="form-control"
                     />
                   </div>

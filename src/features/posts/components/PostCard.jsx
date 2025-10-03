@@ -1,30 +1,26 @@
 // src/components/PostCard.jsx
 
 import React from "react";
-import { formatDate } from "../../../helpers/toolsHelper"; // Path ini sudah benar jika PostCard ada di src/components
+import { formatDate } from "../../../helpers/toolsHelper"; // Path ini sudah benar
 
 function PostCard({ post, profile, onView, onEdit, onDelete }) {
   const { id, title, description, cover_url, created_at, is_finished } = post;
 
-  // Asumsi profil memiliki properti username dan profile_picture_url
-  // Jika profile_picture_url belum ada, akan menggunakan placeholder
   const username = profile?.username || "Pengguna";
   const profilePicture =
     profile?.profile_picture_url || "https://via.placeholder.com/50";
 
-  // Mengambil deskripsi singkat
   const shortDescription =
     description.length > 100
       ? description.substring(0, 100) + "..."
       : description;
 
+  // Variabel statusBadge dihilangkan karena tidak digunakan
+
   return (
-    // Perbesar tampilan: col-lg-6 col-md-8 sudah di HomePage, jadi ini akan mengatur lebar relatifnya
-    // Untuk memperbesar isi card, kita akan memastikan gambar memakan sebagian besar ruang
     <div className="card shadow-sm mb-4 border rounded-3">
       {/* Header Post (User Info) */}
       <div className="card-header d-flex align-items-center bg-white border-bottom-0 p-3">
-        {/* Gambar profil pengguna - pastikan profilePicture memiliki URL yang valid */}
         <img
           src={profilePicture}
           alt={username}
@@ -35,6 +31,8 @@ function PostCard({ post, profile, onView, onEdit, onDelete }) {
           <p className="fw-bold mb-0">{username}</p>
           <small className="text-muted">{formatDate(created_at)}</small>
         </div>
+
+        {/* Badge Status telah dihapus dari sini */}
         <div className="dropdown">
           <button
             className="btn btn-sm btn-light p-0"
@@ -45,6 +43,15 @@ function PostCard({ post, profile, onView, onEdit, onDelete }) {
             <i className="bi bi-three-dots-vertical"></i>
           </button>
           <ul className="dropdown-menu dropdown-menu-end">
+            {/* OPSI: Tambahkan status di sini jika perlu. Jika tidak, biarkan daftar aksi saja. */}
+            <li>
+              <span className="dropdown-item fw-bold text-muted">
+                Status: {is_finished ? "Selesai" : "Proses"}
+              </span>
+            </li>
+            <li>
+              <hr className="dropdown-divider" />
+            </li>
             <li>
               <button className="dropdown-item" onClick={onView}>
                 <i className="bi bi-eye me-2"></i> Lihat Detail
@@ -67,14 +74,11 @@ function PostCard({ post, profile, onView, onEdit, onDelete }) {
         </div>
       </div>
 
-      {/* Gambar Postingan - Ini adalah bagian penting untuk memuat gambar */}
-      {/* Pastikan `cover_url` dari API Anda adalah URL gambar yang valid dan dapat diakses */}
+      {/* Gambar Postingan */}
       <img
         src={cover_url || "https://via.placeholder.com/600x400?text=No+Image"}
         className="card-img-top"
         alt={title}
-        // Mengurangi maxHeight agar gambar terlihat lebih besar jika ukurannya besar
-        // dan objectFit agar gambar tidak terdistorsi
         style={{
           maxHeight: "600px",
           objectFit: "contain",
@@ -83,21 +87,18 @@ function PostCard({ post, profile, onView, onEdit, onDelete }) {
       />
 
       <div className="card-body p-3">
-        {/* Aksi (Like/Comment - Hapus Tombol Share) */}
+        {/* Aksi (Hanya Like/Comment) */}
         <div className="d-flex justify-content-between align-items-center mb-2">
+          {/* Ikon share (pesawat kertas) telah dihapus */}
           <div className="d-flex gap-3">
             <i className="bi bi-heart fs-4 cursor-pointer"></i>
             <i className="bi bi-chat fs-4 cursor-pointer"></i>
-            {/* <i className="bi bi-send fs-4 cursor-pointer"></i> -- Dihapus */}
           </div>
-          <div>
-            <span className={`badge bg-${is_finished ? "success" : "warning"}`}>
-              {is_finished ? "Selesai" : "Proses"}
-            </span>
-          </div>
+
+          {/* Badge status yang ada di pojok kanan bawah ikon interaksi telah dihapus */}
         </div>
 
-        {/* Deskripsi dan Judul */}
+        {/* Deskripsi */}
         <p className="card-text mb-1">
           <span className="fw-bold me-1">{username}</span>
           {shortDescription}

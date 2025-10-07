@@ -3,6 +3,7 @@ import { formatDate } from "../../../helpers/toolsHelper";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { asyncLikePost } from "../states/action";
 import { useDispatch } from "react-redux";
+import { li } from "framer-motion/client";
 
 function PostCard({ post, profile, onView, onEdit, onDelete }) {
   const navigate = useNavigate(); // Use useNavigate hook
@@ -12,22 +13,24 @@ function PostCard({ post, profile, onView, onEdit, onDelete }) {
   // State baru untuk Like
   // Asumsi data post tidak memiliki is_liked atau like_count dari API untuk demo
   const [isLiked, setIsLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(0);
+  // const [likeCount, setLikeCount] = useState(0);
 
-  const handleLikeToggle = () => {
-    setIsLiked((prev) => !prev);
-    setLikeCount((prev) => prev + (isLiked ? -1 : 1));
-  };
+  // const handleLikeToggle = () => {
+  //   setLikeCount((prev) => prev + (isLiked ? -1 : 1));
+  // };
 
   const handleLike = () => {
+    setIsLiked((prev) => !prev);
     if (isLiked) {
       dispatch(asyncLikePost(id, 0)); // Unlike
+      likeCount = likeCount - 1;
       return;
     }
     dispatch(asyncLikePost(id, 1)); // Like
+    likeCount = likeCount + 1;
   };
 
-  setLikeCount(post.likes.length || 100);
+  const likeCount = post?.likes.length || 0;
   console.log(likeCount);
 
   const username = post?.author.name || "Pengguna";

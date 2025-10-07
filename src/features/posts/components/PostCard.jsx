@@ -1,5 +1,3 @@
-// src/components/PostCard.jsx
-
 import React, { useState } from "react";
 import { formatDate } from "../../../helpers/toolsHelper";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
@@ -16,6 +14,14 @@ function PostCard({ post, profile, onView, onEdit, onDelete }) {
   const handleLikeToggle = () => {
     setIsLiked((prev) => !prev);
     setLikeCount((prev) => prev + (isLiked ? -1 : 1));
+  };
+
+  const handleLike = () => {
+    if (isLiked) {
+      dispatch(asyncLikePost(id, 0)); // Unlike
+      return;
+    }
+    dispatch(asyncLikePost(id, 1)); // Like
   };
 
   const username = post?.author.name || "Pengguna";
@@ -58,14 +64,6 @@ function PostCard({ post, profile, onView, onEdit, onDelete }) {
           </button>
           <ul className="dropdown-menu dropdown-menu-end">
             <li>
-              <span className="dropdown-item fw-bold text-muted">
-                Status: {is_finished ? "Selesai" : "Proses"}
-              </span>
-            </li>
-            <li>
-              <hr className="dropdown-divider" />
-            </li>
-            <li>
               <button className="dropdown-item" onClick={onView}>
                 <i className="bi bi-eye me-2"></i> Lihat Detail
               </button>
@@ -107,7 +105,7 @@ function PostCard({ post, profile, onView, onEdit, onDelete }) {
             className={`fs-4 cursor-pointer ${
               isLiked ? "bi bi-heart-fill text-danger" : "bi bi-heart"
             }`}
-            onClick={handleLikeToggle}
+            onClick={handleLike}
           ></i>
 
           {/* Ikon Komentar yang navigasi ke CommentPage */}

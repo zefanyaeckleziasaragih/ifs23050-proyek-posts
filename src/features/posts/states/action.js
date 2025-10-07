@@ -89,6 +89,19 @@ export function asyncSetIsPostAdd(cover, description) {
   };
 }
 
+export function asyncLikePost(postId, like) {
+  return async (dispatch) => {
+    try {
+      await postApi.postLike(postId, like);
+      // dispatch(asyncSetPost(true)); // dikerjakan nanti
+    } catch (error) {
+      showErrorDialog(error.message);
+      // dispatch(asyncSetPost(false)); // dikerjakan nanti
+    }
+    // dispatch(asyncSetPost(true)); //dikerjakan nanti
+  };
+}
+
 export function setIsPostChangeActionCreator(isPostChange) {
   return {
     type: ActionType.SET_IS_POST_CHANGE,

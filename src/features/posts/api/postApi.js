@@ -111,6 +111,21 @@ const postApi = (() => {
     return data.post;
   }
 
+  async function asyncLikePost(postId, like) {
+    const response = await apiHelper.fetchData(_url(`/${postId}/likes`), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ like }),
+    });
+    const { success, message } = await response.json();
+    if (!success) {
+      throw new Error(message);
+    }
+    return message;
+  }
+
   async function deletePost(postId) {
     const response = await apiHelper.fetchData(_url(`/${postId}`), {
       method: "DELETE",

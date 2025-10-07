@@ -51,16 +51,7 @@ function DetailPage() {
       <div className="main-content">
         <div className="container-fluid mt-3">
           <div className="d-flex">
-            <div className="flex-fill">
-              <h2>
-                {post.title}
-                {post.is_finished ? (
-                  <span className="badge bg-success ms-2">Selesai</span>
-                ) : (
-                  <span className="badge bg-warning ms-2">Proses</span>
-                )}
-              </h2>
-            </div>
+            <div className="flex-fill"></div>
             <div>
               <button
                 type="button"

@@ -67,7 +67,7 @@ const postApi = (() => {
   async function putPostCover(postId, cover) {
     console.log(_url(`/${postId}`));
     const response = await apiHelper.fetchData(_url(`/${postId}/cover`), {
-      method: "PUT",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },

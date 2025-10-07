@@ -117,9 +117,8 @@ function ChangeModal({ show, onClose, postId }) {
                     <label className="form-label">Cover</label>
                     <input
                       type="file"
-                      onChange={(e) => setCover(e.target.files?.[0] || null)}
+                      onChange={(e) => changeCover(e.target.files?.[0] || null)}
                       className="form-control"
-                      value={cover}
                     />
                   </div>
                   <div className="mb-3">

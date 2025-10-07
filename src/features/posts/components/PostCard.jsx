@@ -1,39 +1,53 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { formatDate } from "../../../helpers/toolsHelper";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 import { asyncLikePost } from "../states/action";
 import { useDispatch } from "react-redux";
-import { li } from "framer-motion/client";
 
-function PostCard({ post, profile, onView, onEdit, onDelete }) {
-  const navigate = useNavigate(); // Use useNavigate hook
+function PostCard({ post, profile, onView, onEdit, onDelete, currentUserId }) {
+  const navigate = useNavigate();
   const { id, title, description, cover_url, created_at, is_finished } = post;
   const dispatch = useDispatch();
 
-  // State baru untuk Like
-  // Asumsi data post tidak memiliki is_liked atau like_count dari API untuk demo
-  const [isLiked, setIsLiked] = useState(false);
-  // const [likeCount, setLikeCount] = useState(0);
+  // Initialize like state from post data
+  const initialLikeCount = post.likes?.length || 0;
+  const initialIsLiked = post.likes?.includes(profile?.id) || false;
 
-  // const handleLikeToggle = () => {
-  //   setLikeCount((prev) => prev + (isLiked ? -1 : 1));
-  // };
+  const [isLiked, setIsLiked] = useState(initialIsLiked);
+  const [likeCount, setLikeCount] = useState(initialLikeCount);
+
+  // Check if current user is the post author
+  const isOwnPost =
+    post?.author?.id === profile?.id || post?.user_id === profile?.id;
+
+  // Update like count and like status when post data changes
+  useEffect(() => {
+    setLikeCount(post.likes?.length || 0);
+    setIsLiked(post.likes?.includes(profile?.id) || false);
+  }, [post.likes, profile?.id]);
 
   const handleLike = () => {
-    setIsLiked((prev) => !prev);
-    if (isLiked) {
-      dispatch(asyncLikePost(id, 0)); // Unlike
-      likeCount = likeCount - 1;
+    // Prevent liking own post
+    if (isOwnPost) {
+      console.log("Tidak dapat melakukan like pada postingan sendiri");
       return;
     }
-    dispatch(asyncLikePost(id, 1)); // Like
-    likeCount = likeCount + 1;
+
+    console.log("The current use id id:" + profile?.id);
+    if (isLiked) {
+      // Unlike
+      setIsLiked(false);
+      setLikeCount((prev) => prev - 1);
+      dispatch(asyncLikePost(id, 0));
+    } else {
+      // Like
+      setIsLiked(true);
+      setLikeCount((prev) => prev + 1);
+      dispatch(asyncLikePost(id, 1));
+    }
   };
 
-  const likeCount = post?.likes.length || 0;
-  console.log(likeCount);
-
-  const username = post?.author.name || "Pengguna";
+  const username = post?.author?.name || "Pengguna";
   const profilePicture = profile?.photo || "https://via.placeholder.com/50";
 
   const shortDescription =
@@ -42,11 +56,9 @@ function PostCard({ post, profile, onView, onEdit, onDelete }) {
       : description;
 
   const handleCommentClick = () => {
-    // Navigasi ke halaman komentar yang baru dibuat
     navigate(`/posts/${id}/comments`);
   };
 
-  // --- Tampilan PostCard ---
   return (
     <div className="card shadow-sm mb-4 border rounded-3">
       {/* Header Post (User Info) */}
@@ -109,12 +121,16 @@ function PostCard({ post, profile, onView, onEdit, onDelete }) {
       <div className="card-body p-3">
         {/* Aksi (Like Toggable & Comment Link) */}
         <div className="d-flex justify-content-start gap-3 mb-2">
-          {/* Tombol Like yang Toggable */}
+          {/* Tombol Like yang Toggable - Disabled untuk postingan sendiri */}
           <i
-            className={`fs-4 cursor-pointer ${
+            className={`fs-4 ${isOwnPost ? "text-muted" : "cursor-pointer"} ${
               isLiked ? "bi bi-heart-fill text-danger" : "bi bi-heart"
             }`}
             onClick={handleLike}
+            style={{
+              cursor: isOwnPost ? "not-allowed" : "pointer",
+              opacity: isOwnPost ? 0.5 : 1,
+            }}
           ></i>
 
           {/* Ikon Komentar yang navigasi ke CommentPage */}

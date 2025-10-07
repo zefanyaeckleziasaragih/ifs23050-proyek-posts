@@ -29,32 +29,6 @@ function CommentPage() {
           title: `Post ID ${postId}`,
           description: "Ini adalah deskripsi post. Perlu fetch dari API.",
         });
-
-        // HAPUS TOTAL KOMENTAR TRIAL DI BAWAH INI:
-        /*
-        setComments(
-          [
-            {
-              id: 1,
-              username: "Alice",
-              content: "Komentar pertama tentang postingan ini!",
-              created_at: Date.now() - 100000,
-            },
-            {
-              id: 2,
-              username: "Bob",
-              content: "Sangat bagus! Mau coba tambahkan komentar?",
-              created_at: Date.now() - 50000,
-            },
-          ].sort((a, b) => a.created_at - b.created_at)
-        ); 
-        */
-
-        // JIKA ANDA MENGGUNAKAN API, UNCOMMENT BARIS INI:
-        // setComments(fetchedComments);
-
-        // Untuk saat ini, kita biarkan setComments tidak dipanggil di sini.
-        // setComments sudah diinisialisasi sebagai [] di `useState`.
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -117,13 +91,23 @@ function CommentPage() {
           ) : (
             comments.map((comment) => (
               <div key={comment.id} className="list-group-item">
-                <p className="mb-1">
-                  <strong className="me-2">{comment.username}:</strong>
-                  {comment.content}
-                </p>
-                <small className="text-muted">
-                  {formatDate(comment.created_at)}
-                </small>
+                <div className="d-flex justify-content-between align-items-start">
+                  <div className="flex-grow-1">
+                    <p className="mb-1">
+                      <strong className="me-2">{comment.username}:</strong>
+                      {comment.content}
+                    </p>
+                    <small className="text-muted">
+                      {formatDate(comment.created_at)}
+                    </small>
+                  </div>
+                  <button
+                    className="btn btn-sm btn-danger ms-2"
+                    onClick={() => handleDeleteComment(comment.id)}
+                  >
+                    <i className="bi bi-trash"></i>
+                  </button>
+                </div>
               </div>
             ))
           )}

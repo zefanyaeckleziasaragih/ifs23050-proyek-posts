@@ -44,17 +44,34 @@ const postApi = (() => {
     return message;
   }
 
-  async function putPost(postId, cover, description, is_finished) {
+  async function putPostDescription(postId, description) {
+    console.log(_url(`/${postId}`));
     const response = await apiHelper.fetchData(_url(`/${postId}`), {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        cover,
         description,
-        is_finished,
       }),
+    });
+
+    const { success, message } = await response.json();
+    if (!success) {
+      throw new Error(message);
+    }
+
+    return message;
+  }
+
+  async function putPostCover(postId, cover) {
+    console.log(_url(`/${postId}`));
+    const response = await apiHelper.fetchData(_url(`/${postId}/cover`), {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: cover,
     });
 
     const { success, message } = await response.json();
@@ -109,7 +126,8 @@ const postApi = (() => {
   return {
     postPost,
     postPostCover,
-    putPost,
+    putPostDescription,
+    putPostCover,
     getPosts,
     getPostById,
     deletePost,

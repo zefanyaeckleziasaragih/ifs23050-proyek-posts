@@ -103,19 +103,20 @@ export function setIsPostChangedActionCreator(isPostChanged) {
   };
 }
 
-export function asyncSetIsPostChange(postId, cover, description, is_finished) {
+export function asyncSetIsPostChange(postId, cover, description) {
   return async (dispatch) => {
+    if (!cover || !description) {
+      showErrorDialog("Cover dan deskripsi harus diisi!");
+    }
     try {
-      const message = await postApi.putPost(
-        postId,
-        cover,
-        description,
-        is_finished
-      );
-      showSuccessDialog(message);
+      const message1 = await postApi.putPostDescription(postId, description);
+      showSuccessDialog(message1);
+      const message2 = await postApi.putPostCover(postId, cover);
+      showSuccessDialog(message2);
       dispatch(setIsPostChangedActionCreator(true));
     } catch (error) {
-      showErrorDialog(error.message);
+      showErrorDialog(error.message1);
+      showErrorDialog(error.message2);
     }
     dispatch(setIsPostChangeActionCreator(true));
   };

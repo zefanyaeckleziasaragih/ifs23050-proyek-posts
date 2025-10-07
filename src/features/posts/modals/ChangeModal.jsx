@@ -21,9 +21,8 @@ function ChangeModal({ show, onClose, postId }) {
 
   const [loading, setLoading] = useState(false);
 
-  const [title, changeCover] = useState("");
+  const [cover, changeCover] = useState(null);
   const [description, changeDescription] = useState("");
-  const [isFinished, changeIsFinished] = useState(false);
 
   // 1. Ambil data post sesuai postId
   useEffect(() => {
@@ -35,9 +34,9 @@ function ChangeModal({ show, onClose, postId }) {
   // 2. Ubah nilai pada input
   useEffect(() => {
     if (post) {
-      changeCover(post.title);
       changeDescription(post.description);
-      changeIsFinished(post.is_finished);
+      console.log(post);
+      changeCover(post.cover);
     }
   }, [post]);
 
@@ -65,18 +64,17 @@ function ChangeModal({ show, onClose, postId }) {
 
   // Fungsi save
   function handleSave() {
-    if (!title) {
-      showErrorDialog("Judul tidak boleh kosong");
+    if (!cover) {
+      showErrorDialog("Cover tidak boleh kosong");
       return;
     }
-
     if (!description) {
       showErrorDialog("Deskripsi tidak boleh kosong");
       return;
     }
 
     setLoading(true);
-    dispatch(asyncSetIsPostChange(postId, title, description, isFinished));
+    dispatch(asyncSetIsPostChange(postId, cover, description));
   }
 
   if (!post) return;
@@ -116,34 +114,21 @@ function ChangeModal({ show, onClose, postId }) {
                 </div>
                 <div className="modal-body">
                   <div className="mb-3">
-                    <label className="form-label">Judul</label>
+                    <label className="form-label">Cover</label>
                     <input
-                      type="text"
-                      value={title}
-                      onChange={(e) => changeCover(e.target.value)}
+                      type="file"
+                      onChange={(e) => setCover(e.target.files?.[0] || null)}
                       className="form-control"
+                      value={cover}
                     />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Status</label>
-                    <select
-                      className="form-select"
-                      value={isFinished ? "true" : "false"}
-                      onChange={(e) =>
-                        changeIsFinished(e.target.value === "true")
-                      }
-                    >
-                      <option value="false">Proses</option>
-                      <option value="true">Selesai</option>
-                    </select>
                   </div>
                   <div className="mb-3">
                     <label className="form-label">Deskripsi</label>
                     <textarea
-                      value={description}
                       onChange={(e) => changeDescription(e.target.value)}
                       className="form-control"
                       rows="3"
+                      value={description}
                     ></textarea>
                   </div>
                 </div>

@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { formatDate } from "../../../helpers/toolsHelper";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { asyncLikePost } from "../states/action";
+import { useDispatch } from "react-redux";
 
 function PostCard({ post, profile, onView, onEdit, onDelete }) {
   const navigate = useNavigate(); // Use useNavigate hook
   const { id, title, description, cover_url, created_at, is_finished } = post;
+  const dispatch = useDispatch();
 
   // State baru untuk Like
   // Asumsi data post tidak memiliki is_liked atau like_count dari API untuk demo
@@ -23,6 +26,9 @@ function PostCard({ post, profile, onView, onEdit, onDelete }) {
     }
     dispatch(asyncLikePost(id, 1)); // Like
   };
+
+  setLikeCount(post.likes.length || 100);
+  console.log(likeCount);
 
   const username = post?.author.name || "Pengguna";
   const profilePicture = profile?.photo || "https://via.placeholder.com/50";

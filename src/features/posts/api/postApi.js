@@ -111,7 +111,7 @@ const postApi = (() => {
     return data.post;
   }
 
-  async function asyncLikePost(postId, like) {
+  async function postLike(postId, like) {
     const response = await apiHelper.fetchData(_url(`/${postId}/likes`), {
       method: "POST",
       headers: {
@@ -146,6 +146,7 @@ const postApi = (() => {
     putPostCover,
     getPosts,
     getPostById,
+    postLike,
     deletePost,
   };
 })();

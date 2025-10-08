@@ -9,7 +9,7 @@ import {
   asyncSetPosts,
   setIsPostDeleteActionCreator,
 } from "../states/action";
-import { formatDate, showConfirmDialog } from "../../../helpers/toolsHelper";
+import { showConfirmDialog } from "../../../helpers/toolsHelper";
 import PostCard from "../components/PostCard";
 
 function HomePage() {
@@ -20,11 +20,9 @@ function HomePage() {
   const posts = useSelector((state) => state.posts);
   const isPostDeleted = useSelector((state) => state.isPostDeleted);
 
-  // keep filter state internal (not shown in UI) in case backend expects it
+  // internal filter kept for compatibility
   const [filter, changeFilter] = useState("");
-
-  // owner filter: "all" = semua pengguna, "mine" = hanya postingan saya
-  const [ownerFilter, changeOwnerFilter] = useState("all");
+  const [ownerFilter, changeOwnerFilter] = useState("all"); // "all" | "mine"
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [showChangeModal, setShowChangeModal] = useState(false);
@@ -92,42 +90,17 @@ function HomePage() {
           <h2>Beranda</h2>
           <hr />
 
-          <div className="row">
-            <div className="col-md-4 mb-4">
+          {/* Besar: satu kartu Jumlah Post di atas */}
+          <div className="row mb-3">
+            <div className="col-12">
               <div className="card bg-primary text-white">
-                <div className="card-body">
-                  <h5 className="card-title">Jumlah Post</h5>
-                  <h2 className="card-text">{displayedPosts.length}</h2>
+                <div className="card-body d-flex justify-content-between align-items-center">
+                  <div>
+                    <h5 className="card-title">Jumlah Post</h5>
+                    <h2 className="card-text">{displayedPosts.length}</h2>
+                  </div>
                   <i
-                    className="bi bi-list-check opacity-50 position-absolute bottom-0 end-0 pe-3"
-                    style={{ fontSize: "3rem" }}
-                  ></i>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-4 mb-4">
-              <div className="card bg-success text-white">
-                <div className="card-body">
-                  <h5 className="card-title">Post Selesai</h5>
-                  <h2 className="card-text">
-                    {displayedPosts.filter((post) => post.is_finished).length}
-                  </h2>
-                  <i
-                    className="bi bi-check-circle opacity-50 position-absolute bottom-0 end-0 pe-3"
-                    style={{ fontSize: "3rem" }}
-                  ></i>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-4 mb-4">
-              <div className="card bg-warning text-dark">
-                <div className="card-body">
-                  <h5 className="card-title">Post Proses</h5>
-                  <h2 className="card-text">
-                    {displayedPosts.filter((post) => !post.is_finished).length}
-                  </h2>
-                  <i
-                    className="bi bi-hourglass-split opacity-50 position-absolute bottom-0 end-0 pe-3"
+                    className="bi bi-list-check opacity-50"
                     style={{ fontSize: "3rem" }}
                   ></i>
                 </div>
@@ -135,57 +108,62 @@ function HomePage() {
             </div>
           </div>
 
-          <div className="card mb-4">
-            <div className="card-header">
-              <div className="d-flex align-items-center">
-                <div className="flex-fill">
-                  <h4 className="pt-1">Daftar Post</h4>
-                </div>
-                <div className="d-flex gap-2">
-                  {/* HAPUS kontrol Filter (sesuai permintaan)
-                      Hanya tampilkan kontrol "Tampilkan" dengan label & opsi yang diminta */}
-                  <div className="input-group">
-                    <span className="input-group-text">Tampilkan</span>
+          {/* DUA CONTAINER: kiri = sampingan (jumlah + kontrol), kanan = daftar post */}
+          <div className="row">
+            {/* KIRI: sampingan compact */}
+            <div className="col-lg-3 mb-4">
+              <div className="card h-100">
+                <div className="card-body d-flex flex-column">
+                  <div className="mt-4">
+                    <label className="form-label">Tampilkan</label>
                     <select
-                      className="form-select"
+                      className="form-select mb-3"
                       value={ownerFilter}
                       onChange={(e) => changeOwnerFilter(e.target.value)}
                     >
                       <option value="mine">Semua postingan saya</option>
                       <option value="all">Semua postingan pengguna</option>
                     </select>
-                  </div>
 
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={() => setShowAddModal(true)}
-                  >
-                    <i className="bi bi-plus"></i> Tambah Post
-                  </button>
+                    <button
+                      className="btn btn-primary w-100"
+                      onClick={() => setShowAddModal(true)}
+                    >
+                      <i className="bi bi-plus-lg"></i> Tambah Post
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="row justify-content-center">
-            {displayedPosts.length === 0 && (
-              <div className="col-12 text-center py-5">
-                <p className="lead">Belum ada data post yang tersedia.</p>
+            {/* KANAN: daftar post */}
+            <div className="col-lg-9">
+              <div className="card mb-3">
+                <div className="card-header">
+                  <h4 className="pt-1 mb-0">Daftar Post</h4>
+                </div>
               </div>
-            )}
 
-            <div className="col-lg-6 col-md-8">
-              {displayedPosts.map((post) => (
-                <PostCard
-                  key={`post-${post.id}`}
-                  post={post}
-                  profile={profile}
-                  onView={() => navigate(`/posts/${post.id}`)}
-                  onEdit={() => handleEditPost(post.id)}
-                  onDelete={() => handleDeletePost(post.id)}
-                />
-              ))}
+              <div className="row">
+                {displayedPosts.length === 0 && (
+                  <div className="col-12 text-center py-5">
+                    <p className="lead">Belum ada data post yang tersedia.</p>
+                  </div>
+                )}
+
+                <div className="col-12">
+                  {displayedPosts.map((post) => (
+                    <PostCard
+                      key={`post-${post.id}`}
+                      post={post}
+                      profile={profile}
+                      onView={() => navigate(`/posts/${post.id}`)}
+                      onEdit={() => handleEditPost(post.id)}
+                      onDelete={() => handleDeletePost(post.id)}
+                    />
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>

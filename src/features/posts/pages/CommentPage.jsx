@@ -9,6 +9,7 @@ import {
   asyncSetPost,
   asyncPostComment,
   asyncDeleteComment,
+  setIsPostActionCreator,
 } from "../states/action";
 
 function CommentPage() {
@@ -17,8 +18,7 @@ function CommentPage() {
   const { postId } = useParams();
   const navigate = useNavigate();
   const post = useSelector((state) => state.post);
-  const [comments, setComments] = useState([]); // Array kosong, tidak ada komentar awal
-  const [loading, setLoading] = useState(true);
+  const isPost = useSelector((state) => state.isPost);
   const [newComment, setNewComment] = useState("");
 
   console.log("Rendering CommentPage for postId:", postId);
@@ -30,62 +30,57 @@ function CommentPage() {
     }
   }, [postId]);
 
-  console.log("Post data from Redux:", post);
-
+  // 2. Periksa apakah pengambilan data post sudah selesai
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        // --- LOGIKA FETCH DATA POST DAN KOMENTAR (PERLU IMPLEMENTASI API NYATA) ---
-        // Asumsi sementara: Anda akan fetch detail post.
-        // const fetchedPost = await postApi.getPostById(postId);
-        // const fetchedComments = await commentApi.getCommentsByPostId(postId); // Anda harus membuat commentApi
-        // PLACEHOLDER DATA POST:
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
+    if (isPost) {
+      dispatch(setIsPostActionCreator(false));
+      if (!post) {
+        navigate("/");
       }
-    };
+    }
+  }, [isPost, post, navigate]);
 
-    fetchData();
-  }, [postId]);
+  console.log("Post data from Redux:", post);
+  console.log("Post keys:", post ? Object.keys(post) : "No post data");
+  console.log("Post comments property:", post?.comments);
 
-  const handleSubmitComment = (e) => {
+
+  const handleSubmitComment = async (e) => {
     e.preventDefault();
     if (!newComment.trim()) return;
 
-    // --- LOGIKA POST KOMENTAR KE API (PERLU IMPLEMENTASI API NYATA) ---
-
-    dispatch(asyncPostComment(postId, newComment));
-
-    // PLACEHOLDER: Tambahkan komentar baru secara lokal (INI HARUS TETAP ADA)
-    const newCommentData = {
-      id: Date.now(),
-      username: "Anda", // Gunakan profile.username dari Redux jika tersedia
-      content: newComment,
-      created_at: Date.now(),
-    };
-
-    setComments((prev) => [...prev, newCommentData]);
-    setNewComment("");
+    try {
+      // Post comment to API
+      await dispatch(asyncPostComment(postId, newComment));
+      
+      // Refresh post data to get updated comments
+      dispatch(asyncSetPost(postId));
+      
+      // Clear the input
+      setNewComment("");
+    } catch (error) {
+      console.error("Error posting comment:", error);
+    }
   };
 
-  const handleDeleteComment = (commentId) => {
-    // --- LOGIKA DELETE KOMENTAR DARI API (PERLU IMPLEMENTASI API NYATA) ---
-    console.log("Menghapus komen dengan id:", commentId);
-    dispatch(asyncDeleteComment(postId, commentId));
-    console.log("Berhasil menghapus komen:", commentId);
-    // PLACEHOLDER: Hapus komentar secara lokal (INI HARUS TETAP ADA)
-    setComments((prev) => prev.filter((comment) => comment.id !== commentId));
+  const handleDeleteComment = async (commentId) => {
+    try {
+      console.log("Menghapus komen dengan id:", commentId);
+      
+      // Delete comment from API
+      await dispatch(asyncDeleteComment(postId, commentId));
+      
+      // Refresh post data to get updated comments
+      dispatch(asyncSetPost(postId));
+      
+      console.log("Berhasil menghapus komen:", commentId);
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
   };
-
-  if (loading) {
-    return <div className="mt-5 text-center">Memuat Komentar...</div>;
-  }
 
   if (!post) {
-    return <div className="mt-5 text-center">Post tidak ditemukan.</div>;
+    return <div className="mt-5 text-center">Memuat Komentar...</div>;
   }
 
   return (
@@ -103,13 +98,13 @@ function CommentPage() {
       {/* Daftar Komentar */}
       <div className="card mb-4 col-lg-6 mx-auto">
         <div className="card-header fw-bold">
-          {post.comments.length} Komentar
+          {post.comments?.length || 0} Komentar
         </div>
         <div
           className="list-group list-group-flush"
           style={{ maxHeight: "60vh", overflowY: "auto" }}
         >
-          {post.comments.length === 0 ? (
+          {!post.comments || post.comments.length === 0 ? (
             <div className="p-3 text-center text-muted">
               Belum ada komentar.
             </div>

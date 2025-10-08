@@ -142,12 +142,9 @@ const postApi = (() => {
   }
 
   async function deleteComment(postId, commentId) {
-    const response = await apiHelper.fetchData(
-      _url(`/${postId}/comments/${commentId}`),
-      {
-        method: "DELETE",
-      }
-    );
+    const response = await apiHelper.fetchData(_url(`/${commentId}/comments`), {
+      method: "DELETE",
+    });
     const { success, message } = await response.json();
     if (!success) {
       throw new Error(message);

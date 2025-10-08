@@ -73,8 +73,9 @@ function CommentPage() {
 
   const handleDeleteComment = (commentId) => {
     // --- LOGIKA DELETE KOMENTAR DARI API (PERLU IMPLEMENTASI API NYATA) ---
+    console.log("Menghapus komen dengan id:", commentId);
     dispatch(asyncDeleteComment(postId, commentId));
-
+    console.log("Berhasil menghapus komen:", commentId);
     // PLACEHOLDER: Hapus komentar secara lokal (INI HARUS TETAP ADA)
     setComments((prev) => prev.filter((comment) => comment.id !== commentId));
   };

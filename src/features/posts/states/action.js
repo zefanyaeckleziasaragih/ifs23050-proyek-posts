@@ -102,6 +102,32 @@ export function asyncLikePost(postId, like) {
   };
 }
 
+export function asyncPostComment(postId, comment) {
+  return async (dispatch) => {
+    try {
+      await postApi.postComment(postId, comment);
+      // dispatch(asyncSetPost(true)); // dikerjakan nanti
+    } catch (error) {
+      showErrorDialog(error.message);
+      // dispatch(asyncSetPost(false)); // dikerjakan nanti
+    }
+    // dispatch(asyncSetPost(true)); //dikerjakan nanti
+  };
+}
+
+export function asyncDeleteComment(postId, commentId) {
+  return async (dispatch) => {
+    try {
+      await postApi.deleteComment(postId, commentId);
+      // dispatch(asyncSetPost(true)); // dikerjakan nanti
+    } catch (error) {
+      showErrorDialog(error.message);
+      // dispatch(asyncSetPost(false)); // dikerjakan nanti
+    }
+    // dispatch(asyncSetPost(true)); //dikerjakan nanti
+  };
+}
+
 export function setIsPostChangeActionCreator(isPostChange) {
   return {
     type: ActionType.SET_IS_POST_CHANGE,

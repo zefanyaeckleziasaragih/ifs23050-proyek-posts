@@ -126,6 +126,35 @@ const postApi = (() => {
     return message;
   }
 
+  async function postComment(postId, comment) {
+    const response = await apiHelper.fetchData(_url(`/${postId}/comments`), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ comment }),
+    });
+    const { success, message } = await response.json();
+    if (!success) {
+      throw new Error(message);
+    }
+    return message;
+  }
+
+  async function deleteComment(postId, commentId) {
+    const response = await apiHelper.fetchData(
+      _url(`/${postId}/comments/${commentId}`),
+      {
+        method: "DELETE",
+      }
+    );
+    const { success, message } = await response.json();
+    if (!success) {
+      throw new Error(message);
+    }
+    return message;
+  }
+
   async function deletePost(postId) {
     const response = await apiHelper.fetchData(_url(`/${postId}`), {
       method: "DELETE",
@@ -147,6 +176,8 @@ const postApi = (() => {
     getPosts,
     getPostById,
     postLike,
+    postComment,
+    deleteComment,
     deletePost,
   };
 })();

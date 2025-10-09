@@ -77,6 +77,9 @@ function PostCard({ post, profile, onView, onEdit, onDelete, currentUserId }) {
             border-radius: 18px; /* Lebih bulat */
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08); /* Shadow yang lebih dalam tapi halus */
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            max-width: 800px; /* Lebar maksimal untuk tampilan yang lebih baik */
+            margin: auto; /* Centering card */
+            width: 100%; /* Pastikan lebar penuh pada container */
           }
           .modern-card:hover {
              transform: translateY(-2px);

@@ -1,5 +1,6 @@
+// AuthLayout.jsx
 import { useDispatch, useSelector } from "react-redux";
-import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import apiHelper from "../../../helpers/apiHelper";
 import { asyncSetProfile, setIsProfile } from "../../users/states/action";
 import { useEffect } from "react";
@@ -18,7 +19,7 @@ function AuthLayout() {
     if (authToken) {
       dispatch(asyncSetProfile());
     }
-  }, []);
+  }, [dispatch]);
 
   // 2. Jika pengguna sudah login, arahkan ke halaman utama
   useEffect(() => {
@@ -28,48 +29,39 @@ function AuthLayout() {
         navigate("/");
       }
     }
-  }, [isProfile]);
+  }, [isProfile, profile, dispatch, navigate]);
 
   return (
-    <div className="container-fluid">
-      <div className="row justify-content-center">
-        <div className="col-lg-5 col-md-6 col-sm-8">
-          <div className="card mt-5">
-            <div className="card-header text-center pb-0">
-              <img
-                src="/logo.png"
-                alt="Logo"
-                style={{ width: "64px", height: "64px" }}
-              />
-              <ul className="nav nav-tabs mt-2">
-                <li className="nav-item">
-                  <NavLink
-                    to="/auth/login"
-                    className={`nav-link ${
-                      location.pathname === "/auth/login" ? "active" : ""
-                    }`}
-                    aria-current="page"
-                  >
-                    Masuk
-                  </NavLink>
-                </li>
-                <li className="nav-item">
-                  <NavLink
-                    to="/auth/register"
-                    className={`nav-link ${
-                      location.pathname === "/auth/register" ? "active" : ""
-                    }`}
-                  >
-                    Daftar
-                  </NavLink>
-                </li>
-              </ul>
-            </div>
-            <div className="card-body">
-              <Outlet />
-            </div>
-          </div>
-        </div>
+    <div
+      style={{
+        width: "100vw",
+        height: "100vh",
+        overflow: "auto",
+        position: "relative",
+        // Hapus padding: "20px"
+        // Pertahankan background gradient sebagai background utama
+        background:
+          "linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #ffd140 100%)",
+        display: "flex",
+        alignItems: "stretch", // Pastikan Outlet meregang secara vertikal
+        justifyContent: "stretch", // Pastikan Outlet meregang secara horizontal
+        boxSizing: "border-box",
+      }}
+    >
+      {/* Background circles telah dihapus di sini */}
+
+      {/* Konten Outlet (Login/Register) - Sekarang 100% fit ke viewport */}
+      <div
+        style={{
+          position: "relative",
+          zIndex: 10,
+          flex: 1, // Mengambil seluruh ruang yang tersedia
+          height: "100%",
+          width: "100%",
+          boxSizing: "border-box",
+        }}
+      >
+        <Outlet />
       </div>
     </div>
   );

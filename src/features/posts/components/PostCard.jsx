@@ -86,11 +86,15 @@ function PostCard({ post, profile, onView, onEdit, onDelete, currentUserId }) {
             padding: 15px 20px;
           }
           .post-image {
-            max-height: 500px !important;
-            object-fit: cover !important; /* Gunakan cover agar gambar terlihat bagus di semua ukuran */
+            /* PERUBAHAN UTAMA DI SINI */
+            width: 100%; /* Pastikan gambar mengambil lebar penuh container */
+            max-height: 600px !important; /* Batasi tinggi maksimal agar tidak terlalu panjang */
+            object-fit: contain !important; /* Memastikan seluruh gambar terlihat sambil mempertahankan proporsi */
+            
             background-color: #f7f7f7;
             border-top: 1px solid #eee;
             border-bottom: 1px solid #eee;
+            /* END PERUBAHAN */
           }
           .post-actions i {
             font-size: 1.8rem; /* Ikon lebih besar */

@@ -9,7 +9,10 @@ import {
   asyncSetPosts,
   setIsPostDeleteActionCreator,
 } from "../states/action";
-import { showConfirmDialog } from "../../../helpers/toolsHelper";
+import {
+  showConfirmDialog,
+  showSuccessDialog,
+} from "../../../helpers/toolsHelper";
 import PostCard from "../components/PostCard";
 
 function HomePage() {
@@ -99,7 +102,6 @@ function HomePage() {
                   borderRadius: 12,
                   padding: 0,
                   overflow: "hidden",
-                  // gradient reminiscent of Instagram palette
                   background:
                     "linear-gradient(135deg, #f58529 0%, #dd2a7b 40%, #8134af 70%, #515bd4 100%)",
                   boxShadow: "0 6px 18px rgba(0,0,0,0.12)",
@@ -211,24 +213,37 @@ function HomePage() {
                   )}
 
                   <div className="d-flex flex-column gap-4">
-                    {displayedPosts.map((post) => (
-                      <div
-                        key={`post-wrapper-${post.id}`}
-                        style={{
-                          borderRadius: "18px",
-                          overflow: "hidden",
-                          boxShadow: "0 3px 10px rgba(0,0,0,0.05)",
-                        }}
-                      >
-                        <PostCard
-                          post={post}
-                          profile={profile}
-                          onView={() => navigate(`/posts/${post.id}`)}
-                          onEdit={() => handleEditPost(post.id)}
-                          onDelete={() => handleDeletePost(post.id)}
-                        />
-                      </div>
-                    ))}
+                    {displayedPosts.map((post) => {
+                      const isOwner = isPostCreatedByMe(post);
+
+                      return (
+                        <div
+                          key={`post-wrapper-${post.id}`}
+                          style={{
+                            borderRadius: "18px",
+                            overflow: "hidden",
+                            boxShadow: "0 3px 10px rgba(0,0,0,0.05)",
+                          }}
+                        >
+                          <PostCard
+                            post={post}
+                            profile={profile}
+                            isOwner={isOwner} // <-- PASSED
+                            onView={() => navigate(`/posts/${post.id}`)}
+                            onEdit={
+                              isOwner
+                                ? () => handleEditPost(post.id)
+                                : undefined
+                            } // only if owner
+                            onDelete={
+                              isOwner
+                                ? () => handleDeletePost(post.id)
+                                : undefined
+                            } // only if owner
+                          />
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -237,7 +252,13 @@ function HomePage() {
         </div>
       </div>
 
-      <AddModal show={showAddModal} onClose={() => setShowAddModal(false)} />
+      <AddModal
+        show={showAddModal}
+        onClose={() => {
+          setShowAddModal(false);
+          showSuccessDialog("Berhasil menambahkan post baru!");
+        }}
+      />
       <ChangeModal
         show={showChangeModal}
         onClose={() => setShowChangeModal(false)}

@@ -51,12 +51,13 @@ function DetailPage() {
     if (!newComment.trim()) return;
 
     try {
+      console.log("Mengirim komen:", profile);
       // Post comment to API
-      dispatch(asyncPostComment(postId, newComment));
-      
+      dispatch(asyncPostComment(postId, profile.name + ": " + newComment));
+
       // Refresh post data to get updated comments
       dispatch(asyncSetPost(postId));
-      
+
       // Clear the input
       setNewComment("");
     } catch (error) {
@@ -67,13 +68,13 @@ function DetailPage() {
   const handleDeleteComment = async (commentId) => {
     try {
       console.log("Menghapus komen dengan id:", commentId);
-      
+
       // Delete comment from API
       dispatch(asyncDeleteComment(postId, commentId));
-      
+
       // Refresh post data to get updated comments
       dispatch(asyncSetPost(postId));
-      
+
       console.log("Berhasil menghapus komen:", commentId);
     } catch (error) {
       console.error("Error deleting comment:", error);
@@ -89,15 +90,6 @@ function DetailPage() {
         <div className="container-fluid mt-3">
           <div className="d-flex">
             <div className="flex-fill"></div>
-            <div>
-              <button
-                type="button"
-                className="btn btn-warning"
-                onClick={() => setShowChangeCoverModal(true)}
-              >
-                <i className="bi bi-image"></i> Ubah Cover
-              </button>
-            </div>
           </div>
           <hr />
 
@@ -131,9 +123,7 @@ function DetailPage() {
                   <div key={comment.id} className="list-group-item">
                     <div className="d-flex justify-content-between align-items-start">
                       <div className="flex-grow-1">
-                        <p className="mb-1">
-                          {comment.comment}
-                        </p>
+                        <p className="mb-1">{comment.comment}</p>
                         <small className="text-muted">
                           {formatDate(comment.created_at)}
                         </small>

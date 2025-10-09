@@ -56,7 +56,7 @@ function PostCard({ post, profile, onView, onEdit, onDelete, currentUserId }) {
       : description;
 
   const handleCommentClick = () => {
-    navigate(`/posts/${id}/comments`);
+    navigate(`/posts/${id}`);
   };
 
   return (
@@ -85,11 +85,6 @@ function PostCard({ post, profile, onView, onEdit, onDelete, currentUserId }) {
           </button>
           <ul className="dropdown-menu dropdown-menu-end">
             <li>
-              <button className="dropdown-item" onClick={onView}>
-                <i className="bi bi-eye me-2"></i> Lihat Detail
-              </button>
-            </li>
-            <li>
               <button className="dropdown-item" onClick={onEdit}>
                 <i className="bi bi-pencil me-2"></i> Ubah
               </button>
@@ -97,11 +92,16 @@ function PostCard({ post, profile, onView, onEdit, onDelete, currentUserId }) {
             <li>
               <hr className="dropdown-divider" />
             </li>
-            <li>
-              <button className="dropdown-item text-danger" onClick={onDelete}>
-                <i className="bi bi-trash me-2"></i> Hapus
-              </button>
-            </li>
+            {(isOwnPost || String(post.user_id) === String(currentUserId)) && (
+              <li>
+                <button
+                  className="dropdown-item text-danger"
+                  onClick={onDelete}
+                >
+                  <i className="bi bi-trash me-2"></i> Hapus
+                </button>
+              </li>
+            )}
           </ul>
         </div>
       </div>

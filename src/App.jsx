@@ -8,7 +8,7 @@ const AuthLayout = lazy(() => import("./features/auth/layouts/AuthLayout"));
 const RegisterPage = lazy(() => import("./features/auth/pages/RegisterPage"));
 const HomePage = lazy(() => import("./features/posts/pages/HomePage"));
 const DetailPage = lazy(() => import("./features/posts/pages/DetailPage"));
-const CommentPage = lazy(() => import("./features/posts/pages/CommentPage")); // <<< TAMBAHKAN INI
+// const CommentPage = lazy(() => import("./features/posts/pages/CommentPage")); // <<< TAMBAHKAN INI
 const PostLayout = lazy(() => import("./features/posts/layouts/PostLayout"));
 
 function App() {
@@ -43,7 +43,7 @@ function App() {
         <Route path="/" element={<PostLayout />}>
           <Route index element={<HomePage />} />
           <Route path="posts/:postId" element={<DetailPage />} />
-          <Route path="posts/:postId/comments" element={<CommentPage />} />
+          {/* <Route path="posts/:postId/comments" element={<CommentPage />} /> */}
         </Route>
       </Routes>
     </Suspense>

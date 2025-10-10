@@ -19,11 +19,17 @@ function DetailPage() {
 
   const [showChangeCoverModal, setShowChangeCoverModal] = useState(false);
   const [newComment, setNewComment] = useState("");
+  const [fadeIn, setFadeIn] = useState(false);
 
   // Ambil data dari reducer
   const profile = useSelector((state) => state.profile);
   const post = useSelector((state) => state.post);
   const isPost = useSelector((state) => state.isPost);
+
+  // Efek Fade In
+  useEffect(() => {
+    setFadeIn(true);
+  }, []);
 
   // 1. Ambil data post sesuai postId
   useEffect(() => {
@@ -94,268 +100,377 @@ function DetailPage() {
     String(post.author?.id) === String(profile.id) ||
     String(post.user_id) === String(profile.id);
 
+  // Konstanta Warna dan Estetika dari HomePage
+  const PRIMARY_COLOR = "#667eea"; // Ungu Muda
+  const SECONDARY_COLOR = "#764ba2"; // Ungu Tua
+  const ACCENT_COLOR = "#f58529"; // Oranye (dari gradient tombol Home)
+  const GRADIENT_BG =
+    "linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)"; // Gradien Penuh dari HomePage
+
   return (
     <>
-      {/* Style CSS untuk tombol/input yang lebih keren */}
+      {/* Style CSS Konsisten dengan HomePage */}
       <style>
         {`
+          @keyframes fadeInUp {
+            from {
+              opacity: 0;
+              transform: translateY(30px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          @keyframes floatAnimation { /* Tambah animasi float dari HomePage */
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-5px) scale(1.01); }
+          }
           .gradient-button {
-            background: linear-gradient(45deg, #f5576c 0%, #f093fb 100%);
+            background: linear-gradient(135deg, ${ACCENT_COLOR} 0%, #dd2a7b 100%);
             border: none;
             color: white;
+            font-weight: 600;
             transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
           }
           .gradient-button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 10px rgba(245, 87, 108, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(245, 133, 41, 0.4);
             color: white;
           }
           .custom-input:focus {
-            border-color: #f5576c;
-            box-shadow: 0 0 0 0.25rem rgba(245, 87, 108, 0.25);
+            border-color: ${PRIMARY_COLOR} !important;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25) !important;
+            transform: translateY(-1px);
+            transition: all 0.3s ease;
           }
-          .hover-scale:hover {
-            transform: scale(1.01);
-            transition: all 0.2s ease;
+          .hover-scale-detail { /* Ubah nama class agar tidak menimpa */
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+          .hover-scale-detail:hover {
+            transform: scale(1.005) translateY(-3px) !important;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15) !important;
+          }
+          .post-content-container { /* Style baru untuk kontainer tengah */
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.2);
           }
         `}
       </style>
 
-      {/* */}
+      {/* Kontainer Utama dengan Full Screen Background Gradien dari HomePage */}
       <div
-        className="main-content"
         style={{
-          background: "linear-gradient(180deg, #fdfbfb 0%, #ebedee 100%)",
-          minHeight: "calc(100vh - 56px)",
-          padding: "20px 0",
-          // SOLUSI: Tambahkan padding-top di sini untuk memberi ruang pada fixed Navbar
-          paddingTop: "90px",
+          minHeight: "100vh",
+          padding: 0,
+          background: GRADIENT_BG, // Menggunakan BG Gradien Penuh
+          transition: "opacity 0.6s ease",
+          opacity: fadeIn ? 1 : 0,
+          paddingTop: "90px", // Ruang untuk fixed Navbar
         }}
       >
+        {/* Animated Background Circles (Dibuat Mirip HomePage) */}
         <div
-          className="container-fluid"
-          style={{ maxWidth: 800, margin: "0 auto", padding: "0 15px" }}
+          style={{
+            position: "fixed",
+            width: "400px",
+            height: "400px",
+            borderRadius: "50%",
+            background: "rgba(255, 255, 255, 0.1)",
+            top: "-100px",
+            right: "-100px",
+            pointerEvents: "none",
+            zIndex: 1,
+            animation: "floatAnimation 8s ease-in-out infinite reverse",
+          }}
+        />
+        <div
+          style={{
+            position: "fixed",
+            width: "300px",
+            height: "300px",
+            borderRadius: "50%",
+            background: "rgba(255, 255, 255, 0.08)",
+            bottom: "-80px",
+            left: "-80px",
+            pointerEvents: "none",
+            zIndex: 1,
+            animation: "floatAnimation 6s ease-in-out infinite",
+          }}
+        />
+
+        {/* Main Content Container dengan Background Putih Transparan */}
+        <div
+          className="main-content"
+          style={{ position: "relative", zIndex: 10, paddingBottom: "40px" }}
         >
-          {/* Header Postingan */}
-          <div className="d-flex justify-content-between align-items-center mb-4">
-            <h2 className="mb-0" style={{ color: "#333", fontWeight: 700 }}>
-              Detail Postingan
-            </h2>
-          </div>
-
-          {/* Garis pemisah aesthetic */}
           <div
-            style={{
-              height: "3px",
-              background: "linear-gradient(90deg, #f093fb, #f5576c, #ffd140)",
-              borderRadius: "5px",
-              marginBottom: "20px",
-            }}
-          />
-
-          {/* Kartu Postingan Utama */}
-          <div
-            className="card mb-5 hover-scale"
-            style={{
-              borderRadius: 20,
-              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.1)",
-              border: "none",
-            }}
+            className="container-fluid"
+            style={{ maxWidth: 800, margin: "0 auto", padding: "0 15px" }}
           >
-            {post.cover ? (
-              <div
+            {/* Header Postingan */}
+            <div
+              className="d-flex justify-content-between align-items-center mb-4"
+              style={{ animation: "fadeInUp 0.6s ease-out" }}
+            >
+              <h1
+                className="mb-0 text-white"
                 style={{
-                  position: "relative",
-                  overflow: "hidden",
-                  borderTopLeftRadius: 20,
-                  borderTopRightRadius: 20,
+                  fontWeight: 800,
+                  fontSize: "2.5rem",
+                  textShadow: "0 2px 5px rgba(0,0,0,0.4)",
                 }}
               >
-                <img
-                  width="100%"
-                  src={post.cover}
-                  alt="Cover Post"
-                  style={{
-                    maxHeight: "400px",
-                    objectFit: "cover",
-                    display: "block",
-                  }}
-                />
-
-                {/* Tombol Ganti Cover (Hanya untuk pemilik) */}
-                {isPostOwner && (
-                  <button
-                    className="btn btn-sm text-white"
-                    style={{
-                      position: "absolute",
-                      top: 15,
-                      right: 15,
-                      background: "rgba(0,0,0,0.5)",
-                      borderRadius: 10,
-                    }}
-                    onClick={() => setShowChangeCoverModal(true)}
-                  >
-                    <i className="bi bi-image"></i> Ganti Cover
-                  </button>
-                )}
-              </div>
-            ) : (
-              isPostOwner && (
-                // Tombol Tambah Cover jika belum ada
-                <div
-                  className="p-4 bg-light text-center"
-                  style={{ borderTopLeftRadius: 20, borderTopRightRadius: 20 }}
-                >
-                  <button
-                    className="btn gradient-button"
-                    onClick={() => setShowChangeCoverModal(true)}
-                    style={{ borderRadius: 12, padding: "10px 20px" }}
-                  >
-                    <i className="bi bi-image"></i> Tambah Cover Postingan
-                  </button>
-                </div>
-              )
-            )}
-
-            <div className="card-body p-4 p-md-5">
-              <p style={{ fontSize: "1rem", lineHeight: 1.6, color: "#555" }}>
-                {post.description}
-              </p>
-
-              <div className="mt-4 pt-3 border-top">
-                <small className="text-muted d-block">
-                  Dibuat oleh:{" "}
-                  <span style={{ fontWeight: 600, color: "#f5576c" }}>
-                    {post.user?.name || post.author?.name || "Pengguna"}
-                  </span>
-                </small>
-                <small className="text-muted">
-                  Dipublikasi pada: {formatDate(post.created_at || new Date())}
-                </small>
-              </div>
+                <i
+                  className="bi bi-card-heading me-3"
+                  style={{ color: "#FFD700" }} // Ganti warna icon menjadi emas (contoh)
+                ></i>
+                Detail Postingan
+              </h1>
             </div>
-          </div>
-
-          {/* Comments Section */}
-          <div
-            className="card mb-4"
-            style={{
-              borderRadius: 20,
-              boxShadow: "0 5px 20px rgba(0, 0, 0, 0.08)",
-              border: "1px solid #eee",
-            }}
-          >
+            {/* Garis pemisah aesthetic */}
             <div
-              className="card-header fw-bold border-bottom-0 p-4"
               style={{
-                backgroundColor: "transparent",
-                borderBottom: "none",
-                fontSize: "1.2rem",
-                color: "#333",
+                height: "4px",
+                background: `linear-gradient(90deg, #FFD700, #FF69B4)`, // Ganti warna garis (emas ke pink)
+                borderRadius: "5px",
+                marginBottom: "30px",
+                animation: "fadeInUp 0.6s ease-out 0.1s backwards",
               }}
-            >
-              <i
-                className="bi bi-chat-dots-fill me-2"
-                style={{ color: "#f5576c" }}
-              ></i>
-              {post.comments?.length || 0} Komentar
-            </div>
-
-            {/* List Komentar */}
-            <div
-              className="list-group list-group-flush"
-              style={{ maxHeight: "60vh", overflowY: "auto" }}
-            >
-              {!post.comments || post.comments.length === 0 ? (
-                <div className="p-4 text-center text-muted">
-                  <i
-                    className="bi bi-chat-left-text"
-                    style={{ fontSize: "2rem" }}
-                  ></i>
-                  <p className="mb-0">Belum ada komentar.</p>
-                </div>
-              ) : (
-                post.comments.map((comment) => (
+            />
+            <div className="post-content-container">
+              {/* Kartu Postingan Utama */}
+              <div
+                className="card mb-5 hover-scale-detail"
+                style={{
+                  borderRadius: 24,
+                  boxShadow: "0 15px 45px rgba(0, 0, 0, 0.12)",
+                  border: "1px solid #e0e0e0",
+                  animation: "fadeInUp 0.6s ease-out 0.2s backwards",
+                }}
+              >
+                {post.cover ? (
                   <div
-                    key={comment.id}
-                    className="list-group-item"
                     style={{
-                      padding: "15px 20px",
-                      borderBottom: "1px solid #f0f0f0",
+                      position: "relative",
+                      overflow: "hidden",
+                      borderTopLeftRadius: 24,
+                      borderTopRightRadius: 24,
                     }}
                   >
-                    <div className="d-flex justify-content-between align-items-center">
-                      <div className="flex-grow-1 me-3">
-                        {/* JANGAN GANGGU KOMENTAR - Tetap tampilkan teks komentar yang sudah mengandung nama pengguna */}
-                        <p
-                          className="mb-1"
-                          style={{ fontWeight: 500, color: "#222" }}
-                        >
-                          {comment.comment}
-                        </p>
-                        <small
-                          className="text-muted"
-                          style={{ fontSize: "0.85rem" }}
-                        >
-                          {formatDate(comment.created_at)}
-                        </small>
-                      </div>
+                    <img
+                      width="100%"
+                      src={post.cover}
+                      alt="Cover Post"
+                      style={{
+                        maxHeight: "450px",
+                        objectFit: "cover",
+                        display: "block",
+                      }}
+                    />
 
-                      {/* Tombol Delete (Pertahankan Fungsionalitas) */}
+                    {/* Tombol Ganti Cover (Hanya untuk pemilik) */}
+                    {isPostOwner && (
                       <button
-                        className="btn btn-sm btn-outline-danger ms-2"
-                        onClick={() => handleDeleteComment(comment.id)}
-                        style={{ borderRadius: 8 }}
+                        className="btn btn-sm text-white gradient-button"
+                        style={{
+                          position: "absolute",
+                          top: 20,
+                          right: 20,
+                          background: "rgba(0,0,0,0.6)",
+                          borderRadius: 12,
+                          padding: "8px 15px",
+                          boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
+                        }}
+                        onClick={() => setShowChangeCoverModal(true)}
                       >
-                        <i className="bi bi-trash"></i>
+                        <i className="bi bi-image"></i> Ganti Cover
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  isPostOwner && (
+                    // Tombol Tambah Cover jika belum ada
+                    <div
+                      className="p-4 bg-light text-center"
+                      style={{
+                        borderTopLeftRadius: 24,
+                        borderTopRightRadius: 24,
+                        borderBottom: "1px solid #eee",
+                      }}
+                    >
+                      <button
+                        className="btn gradient-button"
+                        onClick={() => setShowChangeCoverModal(true)}
+                        style={{ borderRadius: 12, padding: "12px 25px" }}
+                      >
+                        <i className="bi bi-image me-2"></i> Tambah Cover
+                        Postingan
                       </button>
                     </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
+                  )
+                )}
 
-          {/* Input Komentar Baru */}
-          <div
-            className="card mb-4"
-            style={{
-              borderRadius: 15,
-              boxShadow: "0 5px 20px rgba(0, 0, 0, 0.05)",
-              border: "none",
-            }}
-          >
-            <div className="card-body p-4">
-              <form onSubmit={handleSubmitComment}>
-                <div className="input-group">
-                  <input
-                    type="text"
-                    className="form-control custom-input"
-                    placeholder={`Komentar sebagai ${
-                      profile.name || "Anda"
-                    }...`}
-                    value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
-                    required
+                <div className="card-body p-4 p-md-5">
+                  <p
                     style={{
-                      padding: "12px 15px",
-                      borderRadius: "12px 0 0 12px",
-                      border: "1px solid #ddd",
-                    }}
-                  />
-                  <button
-                    type="submit"
-                    className="btn gradient-button"
-                    style={{
-                      borderRadius: "0 12px 12px 0",
-                      padding: "12px 20px",
+                      fontSize: "1.1rem",
+                      lineHeight: 1.7,
+                      color: "#444",
                     }}
                   >
-                    <i className="bi bi-send-fill me-1"></i> Kirim
-                  </button>
+                    {post.description}
+                  </p>
+
+                  <div className="mt-4 pt-4 border-top">
+                    <small className="text-muted d-block mb-1">
+                      Dibuat oleh:{" "}
+                      <span style={{ fontWeight: 700, color: SECONDARY_COLOR }}>
+                        {post.user?.name || post.author?.name || "Pengguna"}
+                      </span>
+                    </small>
+                    <small
+                      className="text-muted"
+                      style={{ fontSize: "0.9rem" }}
+                    >
+                      Dipublikasi pada:{" "}
+                      {formatDate(post.created_at || new Date())}
+                    </small>
+                  </div>
                 </div>
-              </form>
-            </div>
+              </div>
+
+              {/* Comments Section */}
+              <div
+                className="card mb-4"
+                style={{
+                  borderRadius: 20,
+                  boxShadow: "0 10px 30px rgba(0, 0, 0, 0.08)",
+                  border: "none",
+                  animation: "fadeInUp 0.6s ease-out 0.3s backwards",
+                  overflow: "hidden",
+                }}
+              >
+                <div
+                  className="card-header fw-bold border-bottom-0 p-4"
+                  style={{
+                    backgroundColor: SECONDARY_COLOR,
+                    borderTopLeftRadius: 20,
+                    borderTopRightRadius: 20,
+                    fontSize: "1.2rem",
+                    color: "white",
+                  }}
+                >
+                  <i className="bi bi-chat-dots-fill me-2"></i>
+                  {post.comments?.length || 0} Komentar
+                </div>
+
+                {/* List Komentar */}
+                <div
+                  className="list-group list-group-flush"
+                  style={{ maxHeight: "60vh", overflowY: "auto" }}
+                >
+                  {!post.comments || post.comments.length === 0 ? (
+                    <div className="p-5 text-center text-muted">
+                      <i
+                        className="bi bi-chat-left-text"
+                        style={{ fontSize: "3rem", color: "#ccc" }}
+                      ></i>
+                      <p className="lead mt-3 mb-0">
+                        Jadilah yang pertama berkomentar!
+                      </p>
+                    </div>
+                  ) : (
+                    post.comments.map((comment) => (
+                      <div
+                        key={comment.id}
+                        className="list-group-item"
+                        style={{
+                          padding: "15px 20px",
+                          borderBottom: "1px solid #f0f0f0",
+                          backgroundColor: "#fff",
+                        }}
+                      >
+                        <div className="d-flex justify-content-between align-items-center">
+                          <div className="flex-grow-1 me-3">
+                            {/* JANGAN GANGGU KOMENTAR - Tetap tampilkan teks komentar yang sudah mengandung nama pengguna */}
+                            <p
+                              className="mb-1"
+                              style={{ fontWeight: 500, color: "#222" }}
+                            >
+                              {comment.comment}
+                            </p>
+                            <small
+                              className="text-muted"
+                              style={{ fontSize: "0.85rem" }}
+                            >
+                              {formatDate(comment.created_at)}
+                            </small>
+                          </div>
+
+                          {/* Tombol Delete (Pertahankan Fungsionalitas) */}
+                          <button
+                            className="btn btn-sm btn-outline-danger ms-2"
+                            onClick={() => handleDeleteComment(comment.id)}
+                            style={{ borderRadius: 8 }}
+                          >
+                            <i className="bi bi-trash"></i>
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {/* Input Komentar Baru */}
+              <div
+                className="card"
+                style={{
+                  borderRadius: 15,
+                  boxShadow: "0 5px 20px rgba(0, 0, 0, 0.05)",
+                  border: "none",
+                  animation: "fadeInUp 0.6s ease-out 0.4s backwards",
+                }}
+              >
+                <div className="card-body p-4">
+                  <form onSubmit={handleSubmitComment}>
+                    <div className="input-group">
+                      <input
+                        type="text"
+                        className="form-control custom-input"
+                        placeholder={`Komentar sebagai ${
+                          profile.name || "Anda"
+                        }...`}
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        required
+                        style={{
+                          padding: "12px 15px",
+                          borderRadius: "12px 0 0 12px",
+                          border: "2px solid #ddd",
+                        }}
+                      />
+                      <button
+                        type="submit"
+                        className="btn gradient-button"
+                        style={{
+                          borderRadius: "0 12px 12px 0",
+                          padding: "12px 20px",
+                        }}
+                      >
+                        <i className="bi bi-send-fill me-1"></i> Kirim
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>{" "}
+            {/* Penutup post-content-container */}
           </div>
         </div>
       </div>
@@ -363,7 +478,13 @@ function DetailPage() {
       {/* Modal */}
       <ChangeCoverModal
         show={showChangeCoverModal}
-        onClose={() => setShowChangeCoverModal(false)}
+        onClose={() => {
+          setShowChangeCoverModal(false);
+          // Optional: Re-fetch post data after closing modal to ensure updates (if any) are visible
+          setTimeout(() => {
+            dispatch(asyncSetPost(postId));
+          }, 100);
+        }}
         post={post}
       />
     </>

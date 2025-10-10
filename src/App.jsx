@@ -10,6 +10,7 @@ const HomePage = lazy(() => import("./features/posts/pages/HomePage"));
 const DetailPage = lazy(() => import("./features/posts/pages/DetailPage"));
 // const CommentPage = lazy(() => import("./features/posts/pages/CommentPage")); // <<< TAMBAHKAN INI
 const PostLayout = lazy(() => import("./features/posts/layouts/PostLayout"));
+const ProfilePage = lazy(() => import("./features/users/pages/ProfilePage"));
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
         <Route path="/" element={<PostLayout />}>
           <Route index element={<HomePage />} />
           <Route path="posts/:postId" element={<DetailPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
           {/* <Route path="posts/:postId/comments" element={<CommentPage />} /> */}
         </Route>
       </Routes>

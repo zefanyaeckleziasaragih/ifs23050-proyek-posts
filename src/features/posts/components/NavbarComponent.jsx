@@ -1,80 +1,101 @@
 // NavbarComponent.jsx
 import React from "react";
-// Pastikan Anda mengimpor 'profile' dan 'handleLogout'
-// Jika komponen ini tidak menerima 'profile' dan 'handleLogout' sebagai props, pastikan untuk menyesuaikannya.
+import { Link, useNavigate } from "react-router-dom"; // ✅ Tambahkan import dari react-router-dom
 
 function NavbarComponent({ profile, handleLogout }) {
-  // Tambahkan style untuk profile image jika belum ada di CSS global
+  const navigate = useNavigate(); // ✅ Hook untuk navigasi manual
+
   const profileImageStyle = {
     width: "30px",
     height: "30px",
     borderRadius: "50%",
     objectFit: "cover",
-    border: "2px solid #fff", // Border putih halus
-    boxShadow: "0 0 5px rgba(0,0,0,0.2)",
+    border: "2px solid #f093fb",
+    boxShadow: "0 0 8px rgba(240, 147, 251, 0.6)",
   };
+
+  const PRIMARY_COLOR = "#667eea";
+  const LOGOUT_COLOR = "#dd2a7b";
 
   return (
     <>
-      {/* Tambahkan Style CSS untuk Navbar */}
       <style>
         {`
           .custom-navbar {
-            /* Gradient yang lebih halus dan modern */
             background: linear-gradient(90deg, #515bd4 0%, #dd2a7b 100%) !important;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-            border-bottom: 3px solid #f093fb; /* Aksen warna cerah di bawah */
-            padding-top: 10px;
-            padding-bottom: 10px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2); 
+            border-bottom: 3px solid #f093fb; 
+            padding-top: 12px;
+            padding-bottom: 12px;
+            transition: all 0.3s ease;
           }
           .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: 700;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+            font-size: 1.6rem;
+            font-weight: 800;
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.3);
+            letter-spacing: 0.5px;
             transition: all 0.3s ease;
           }
           .navbar-brand:hover {
-            opacity: 0.9;
-            transform: scale(1.01);
+            opacity: 0.95;
+            transform: scale(1.02);
+            color: #fff !important;
           }
           .dropdown-menu {
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 1px solid #eee;
             padding: 10px 0;
+            overflow: hidden;
+            animation: dropdown-fade-in 0.3s ease-out;
+          }
+          @keyframes dropdown-fade-in {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
           }
           .dropdown-item {
             color: #333;
-            padding: 10px 20px;
+            padding: 12px 20px;
             transition: all 0.2s ease;
+            font-weight: 500;
           }
           .dropdown-item:hover {
-            background-color: #f5f5f5;
-            color: #dd2a7b; /* Warna aksen saat hover */
+            background-color: ${PRIMARY_COLOR}20;
+            color: ${PRIMARY_COLOR};
+            transform: translateX(5px);
+          }
+          .dropdown-item.text-danger:hover {
+            background-color: ${LOGOUT_COLOR}20;
+            color: ${LOGOUT_COLOR} !important;
+            transform: translateX(5px);
           }
           .profile-dropdown-toggle {
-             display: flex;
-             align-items: center;
-             padding: 8px 15px;
-             border-radius: 15px;
-             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            padding: 10px 18px;
+            border-radius: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            font-size: 1rem;
           }
           .profile-dropdown-toggle:hover {
-             background-color: rgba(255, 255, 255, 0.2);
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
           }
         `}
       </style>
 
       <nav className="navbar navbar-expand-md navbar-dark fixed-top custom-navbar">
         <div className="container-fluid">
-          <a className="navbar-brand d-flex align-items-center gap-2" href="#">
+          <Link className="navbar-brand d-flex align-items-center gap-2" to="/">
             <img
               src="/logo.png"
               alt="Logo"
-              style={{ width: "36px", height: "36px" }}
+              style={{ width: "38px", height: "38px" }}
             />
-            Post
-          </a>
+            <span className="d-none d-sm-inline">Post</span>
+          </Link>
+
           <button
             className="navbar-toggler"
             type="button"
@@ -84,6 +105,7 @@ function NavbarComponent({ profile, handleLogout }) {
           >
             <span className="navbar-toggler-icon"></span>
           </button>
+
           <div className="collapse navbar-collapse" id="navbarCollapse">
             <ul className="navbar-nav ms-auto">
               <li className="nav-item dropdown">
@@ -94,26 +116,26 @@ function NavbarComponent({ profile, handleLogout }) {
                   role="button"
                   data-bs-toggle="dropdown"
                 >
-                  {/* Gunakan style profile image yang sudah diperbaiki */}
                   <img
                     src="/user.png"
                     alt="Profile"
                     className="me-2"
                     style={profileImageStyle}
                   />
-                  {/* Pastikan profile.name ada sebelum ditampilkan */}
                   <span style={{ fontWeight: 600 }}>
                     {profile?.name || "User"}
                   </span>
                 </a>
+
                 <ul
                   className="dropdown-menu dropdown-menu-end"
                   aria-labelledby="profileDropdown"
                 >
                   <li>
-                    <a className="dropdown-item" href="#">
+                    {/* ✅ Ganti <a> jadi <Link> agar navigasi ke /profile */}
+                    <Link className="dropdown-item" to="/profile">
                       <i className="bi bi-person me-2"></i>Profile
-                    </a>
+                    </Link>
                   </li>
                   <li>
                     <a className="dropdown-item" href="#">
@@ -126,7 +148,7 @@ function NavbarComponent({ profile, handleLogout }) {
                   <li>
                     <button
                       type="button"
-                      className="dropdown-item text-danger" // Warna merah untuk tombol logout
+                      className="dropdown-item text-danger"
                       onClick={handleLogout}
                     >
                       <i className="bi bi-box-arrow-right me-2"></i> Logout

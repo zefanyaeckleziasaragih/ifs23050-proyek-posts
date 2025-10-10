@@ -1,11 +1,10 @@
 // src/pages/ProfilePage.jsx
 import React, { useEffect, useState } from "react";
 import userApi from "../api/userApi";
-// Asumsi path: sesuaikan path ke toolsHelper jika berbeda
 import {
   showSuccessDialog,
   showErrorDialog,
-} from "../../../helpers/toolsHelper";
+} from "../../../helpers/toolsHelper"; // PASTIKAN PATH INI SUDAH BENAR
 
 function ProfilePage() {
   const [profile, setProfile] = useState(null);
@@ -20,6 +19,16 @@ function ProfilePage() {
     new_password: "",
   });
 
+  const [fadeIn, setFadeIn] = useState(false);
+  useEffect(() => {
+    setFadeIn(true);
+  }, []);
+
+  // Definisikan kembali konstanta CSS dari HomePage
+  const PRIMARY_COLOR = "#667eea";
+
+  // --- FUNGSI FETCH PROFILE, UPDATE, UPLOAD, CHANGE PASSWORD (TETAP SAMA) ---
+
   const fetchProfile = async () => {
     setLoading(true);
     try {
@@ -28,7 +37,9 @@ function ProfilePage() {
       setForm({ name: user.name || "", email: user.email || "" });
     } catch (err) {
       console.error("fetchProfile error:", err);
-      alert(err.message || "Gagal memuat profil. Silakan login ulang.");
+      showErrorDialog(
+        err.message || "Gagal memuat profil. Silakan login ulang."
+      );
     } finally {
       setLoading(false);
     }
@@ -42,17 +53,16 @@ function ProfilePage() {
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     if (!form.name || !form.email) {
-      return alert("Nama dan email tidak boleh kosong");
+      return showErrorDialog("Nama dan email tidak boleh kosong");
     }
     setIsUpdating(true);
     try {
       const updated = await userApi.putProfile(form.name, form.email);
       setProfile(updated);
-      // Mengganti alert() dengan dialog kustom
       showSuccessDialog("Profil berhasil diperbarui!");
     } catch (err) {
       console.error("updateProfile error:", err);
-      alert("Gagal memperbarui profil: " + (err.message || ""));
+      showErrorDialog("Gagal memperbarui profil: " + (err.message || ""));
     } finally {
       setIsUpdating(false);
     }
@@ -64,19 +74,14 @@ function ProfilePage() {
     setPhotoPreview(URL.createObjectURL(file));
     setIsUploading(true);
     try {
-      // Panggilan API ke userApi.postProfilePhoto(file)
       await userApi.postProfilePhoto(file);
-
-      // Mengganti alert() dengan dialog kustom
       showSuccessDialog("Foto profil berhasil diubah!");
-
-      await fetchProfile(); // re-fetch profile agar foto terbaru muncul
+      await fetchProfile();
       setPhotoPreview(null);
       e.target.value = "";
     } catch (err) {
       console.error("upload photo error:", err);
-      // Pertahankan alert untuk pesan error
-      alert(
+      showErrorDialog(
         "Gagal mengubah foto profil: " +
           (err.message || err.toString() || "Kesalahan jaringan.")
       );
@@ -88,7 +93,7 @@ function ProfilePage() {
   const handleChangePassword = async (e) => {
     e.preventDefault();
     if (!passwords.password || !passwords.new_password) {
-      return alert("Isi kedua field password");
+      return showErrorDialog("Isi kedua field password");
     }
     try {
       await userApi.putProfilePassword(
@@ -96,15 +101,16 @@ function ProfilePage() {
         passwords.new_password
       );
 
-      // Mengganti alert() dengan dialog kustom
       showSuccessDialog("Kata sandi berhasil diubah!");
 
       setPasswords({ password: "", new_password: "" });
     } catch (err) {
       console.error("change password error:", err);
-      alert("Gagal mengubah kata sandi: " + (err.message || ""));
+      showErrorDialog("Gagal mengubah kata sandi: " + (err.message || ""));
     }
   };
+
+  // --- END FUNGSI ---
 
   if (loading) return <div className="text-center mt-5">Memuat profil...</div>;
 
@@ -112,7 +118,6 @@ function ProfilePage() {
   const getPhotoUrl = (photo) => {
     if (!photo) return "/user.png";
     if (photo.startsWith("http") || photo.startsWith("https")) return photo;
-    // server returns relative path like "img/profile/3.png"
     return `${
       process.env.REACT_APP_DELCOM_BASEURL ||
       "https://open-api.delcom.org/api/v1"
@@ -122,11 +127,74 @@ function ProfilePage() {
   };
 
   return (
-    <div className="container-fluid py-5">
-      {/* Tambahkan Style CSS untuk offset sidebar */}
+    <>
+      {/* Style Global dari HomePage */}
       <style>
         {`
-          /* Class kustom untuk mengimbangi lebar Sidebar (280px + margin) */
+          /* Animasi float dihapus karena tidak lagi menggunakan latar belakang gradien/besar */
+          @keyframes fadeInUp {
+            from {
+              opacity: 0;
+              transform: translateY(30px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          
+          /* Custom style untuk konsistensi input focus */
+          .home-input-focus:focus {
+            border-color: ${PRIMARY_COLOR} !important;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+          }
+          .home-input-style {
+            border-radius: 12px !important;
+            padding: 12px 18px !important; 
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.1);
+            border: 2px solid #e0e0e0 !important;
+            font-weight: 500;
+          }
+          
+          /* Custom style untuk tombol Save (Gradient) */
+          .home-btn-gradient {
+            background: linear-gradient(135deg, #f58529 0%, #dd2a7b 100%);
+            transition: all 0.3s ease;
+            color: white;
+            font-weight: 700;
+            border-radius: 12px !important;
+            padding: 0.75rem 0 !important;
+            border: none;
+          }
+          .home-btn-gradient:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(245, 133, 41, 0.4);
+          }
+          .home-btn-gradient:active:not(:disabled) {
+            transform: translateY(0);
+          }
+          
+          /* Custom style untuk tombol Danger */
+          .btn-danger-styled {
+            background-color: #dc3545 !important;
+            border-color: #dc3545 !important;
+            border-radius: 12px !important;
+            padding: 0.75rem 0 !important;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 15px rgba(220, 53, 69, 0.2);
+          }
+          .btn-danger-styled:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(220, 53, 69, 0.4);
+          }
+          .btn-danger-styled:active {
+            transform: translateY(0);
+          }
+
+          /* Offset Sidebar */
           .ps-sidebar-offset {
             padding-left: 320px; 
             padding-right: 30px;
@@ -141,118 +209,202 @@ function ProfilePage() {
         `}
       </style>
 
-      {/* Kontainer utama konten dengan offset sidebar */}
-      <div className="ps-sidebar-offset">
-        <h2 className="fw-bold mb-4 text-center">Profil Pengguna</h2>
+      {/* KONTEN UTAMA DENGAN LATAR BELAKANG PUTIH */}
+      <div
+        style={{
+          // --- PERUBAHAN UTAMA DI SINI ---
+          // Mengubah latar belakang menjadi putih solid
+          background: "#f8f9fa", // Warna abu-abu terang, atau bisa "#fff" (putih murni)
+          minHeight: "100%", // Mengganti 100vh agar tidak memaksakan tinggi
+          // ------------------------------
+          transition: "opacity 0.6s ease",
+          opacity: fadeIn ? 1 : 0,
+          paddingBottom: "50px", // Tambahkan padding agar ada ruang di bawah
+        }}
+      >
+        {/* Lingkaran animasi latar belakang dihapus */}
 
-        {/* Card Profil Utama */}
-        <div className="card shadow-lg p-4 mb-5 border-0 rounded-4">
-          <div className="d-flex align-items-center gap-4">
-            <div className="position-relative">
-              <img
-                src={photoPreview ? photoPreview : getPhotoUrl(profile.photo)}
-                alt="Profile"
-                className="rounded-circle shadow"
-                width="120"
-                height="120"
-                style={{ objectFit: "cover", border: "3px solid #f093fb" }}
-              />
-              <label
-                htmlFor="photoUpload"
-                className={`btn btn-sm btn-outline-primary position-absolute bottom-0 end-0 rounded-circle ${
-                  isUploading ? "disabled" : ""
-                }`}
-                style={{
-                  transform: "translate(20%, -20%)",
-                  cursor: isUploading ? "not-allowed" : "pointer",
-                }}
-              >
-                <i className="bi bi-camera"></i>
-              </label>
-              <input
-                id="photoUpload"
-                type="file"
-                accept="image/*"
-                className="d-none"
-                onChange={handleChangePhoto}
-              />
-            </div>
+        {/* Konten Utama */}
+        <div
+          className="main-content"
+          style={{ position: "relative", zIndex: 10 }}
+        >
+          <div
+            className="container-fluid pt-5 pb-5"
+            style={{ maxWidth: 800, margin: "0 auto", padding: "0 15px" }}
+          >
+            {/* Judul Halaman */}
+            <h2
+              className="fw-bold mb-5 text-dark text-center"
+              style={{
+                // Mengubah warna teks menjadi gelap
+                fontSize: "2.5rem",
 
-            <div>
-              <h4 className="mb-1">{profile.name}</h4>
-              <p className="text-muted mb-0">{profile.email}</p>
-              <small className="text-secondary">
-                ID Pengguna: {profile.id}
-              </small>
+                animation: "fadeInUp 0.6s ease-out",
+              }}
+            >
+              <i
+                className="bi bi-person-circle"
+                style={{ marginRight: 10, color: PRIMARY_COLOR }}
+              ></i>
+              Pengaturan Profil
+            </h2>
+
+            {/* Kontainer Card Utama (Hanya White Background) */}
+            <div
+              className="p-4 p-md-5"
+              style={{
+                // Menghilangkan backdropFilter karena background sudah putih
+                background: "#fff",
+                borderRadius: "24px",
+                boxShadow: "0 20px 60px rgba(0,0,0,0.1)", // Shadow dibuat lebih terang
+                animation: "fadeInUp 0.6s ease-out 0.2s backwards",
+                border: "1px solid #eee", // Border tipis agar terlihat batasnya
+              }}
+            >
+              {/* Card Profil Utama */}
+              <div className="mb-5 pb-4 border-bottom border-1 border-secondary border-opacity-25">
+                <div className="d-flex align-items-center gap-4">
+                  <div className="position-relative">
+                    <img
+                      src={
+                        photoPreview ? photoPreview : getPhotoUrl(profile.photo)
+                      }
+                      alt="Profile"
+                      className="rounded-circle shadow"
+                      width="100"
+                      height="100"
+                      style={{
+                        objectFit: "cover",
+                        border: "4px solid #dd2a7b",
+                        boxShadow: "0 0 0 5px rgba(221, 42, 123, 0.2)",
+                        transition: "all 0.3s ease",
+                      }}
+                    />
+                    <label
+                      htmlFor="photoUpload"
+                      className={`btn btn-sm btn-light position-absolute bottom-0 end-0 rounded-circle ${
+                        isUploading ? "disabled" : ""
+                      }`}
+                      style={{
+                        transform: "translate(20%, 20%)",
+                        cursor: isUploading ? "not-allowed" : "pointer",
+                        boxShadow: "0 3px 10px rgba(0,0,0,0.2)",
+                        color: PRIMARY_COLOR,
+                      }}
+                      title="Ubah Foto Profil"
+                    >
+                      <i className="bi bi-camera-fill"></i>
+                    </label>
+                    <input
+                      id="photoUpload"
+                      type="file"
+                      accept="image/*"
+                      className="d-none"
+                      onChange={handleChangePhoto}
+                    />
+                  </div>
+
+                  <div>
+                    <h4 className="mb-1 fw-bold text-dark">{profile.name}</h4>
+                    <p className="text-muted mb-0">{profile.email}</p>
+                    <small className="text-secondary">
+                      ID Pengguna: {profile.id}
+                    </small>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card Perbarui Profil */}
+              <div className="mb-5">
+                <h5 className="mb-4 fw-bold text-dark">
+                  <i
+                    className="bi bi-person-lines-fill me-2"
+                    style={{ color: PRIMARY_COLOR }}
+                  ></i>
+                  Perbarui Data Diri
+                </h5>
+                <form onSubmit={handleUpdateProfile}>
+                  <div className="mb-3">
+                    <label className="form-label fw-semibold">
+                      Nama Lengkap
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control home-input-focus home-input-style"
+                      value={form.name}
+                      onChange={(e) =>
+                        setForm({ ...form, name: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label className="form-label fw-semibold">Email</label>
+                    <input
+                      type="email"
+                      className="form-control home-input-focus home-input-style"
+                      value={form.email}
+                      onChange={(e) =>
+                        setForm({ ...form, email: e.target.value })
+                      }
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="btn w-100 home-btn-gradient"
+                    disabled={isUpdating}
+                  >
+                    {isUpdating ? "Menyimpan..." : "Simpan Perubahan"}
+                  </button>
+                </form>
+              </div>
+
+              {/* Card Ganti Kata Sandi */}
+              <div>
+                <h5 className="mb-4 fw-bold text-danger">
+                  <i className="bi bi-shield-lock-fill me-2"></i>
+                  Ganti Kata Sandi
+                </h5>
+                <form onSubmit={handleChangePassword}>
+                  <div className="mb-3">
+                    <label className="form-label fw-semibold">
+                      Kata Sandi Lama
+                    </label>
+                    <input
+                      type="password"
+                      className="form-control home-input-focus home-input-style"
+                      value={passwords.password}
+                      onChange={(e) =>
+                        setPasswords({ ...passwords, password: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label className="form-label fw-semibold">
+                      Kata Sandi Baru
+                    </label>
+                    <input
+                      type="password"
+                      className="form-control home-input-focus home-input-style"
+                      value={passwords.new_password}
+                      onChange={(e) =>
+                        setPasswords({
+                          ...passwords,
+                          new_password: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                  <button type="submit" className="btn w-100 btn-danger-styled">
+                    Ubah Kata Sandi
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
         </div>
-
-        {/* Card Perbarui Profil */}
-        <div className="card shadow p-4 mb-4 border-0 rounded-4">
-          <h5 className="mb-3 fw-bold">Perbarui Profil</h5>
-          <form onSubmit={handleUpdateProfile}>
-            <div className="mb-3">
-              <label className="form-label">Nama Lengkap</label>
-              <input
-                type="text"
-                className="form-control rounded-3"
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-              />
-            </div>
-            <div className="mb-3">
-              <label className="form-label">Email</label>
-              <input
-                type="email"
-                className="form-control rounded-3"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-              />
-            </div>
-            <button
-              type="submit"
-              className="btn btn-primary rounded-3 px-4"
-              disabled={isUpdating}
-            >
-              {isUpdating ? "Menyimpan..." : "Simpan Perubahan"}
-            </button>
-          </form>
-        </div>
-
-        {/* Card Ganti Kata Sandi */}
-        <div className="card shadow p-4 border-0 rounded-4">
-          <h5 className="mb-3 fw-bold text-danger">Ganti Kata Sandi</h5>
-          <form onSubmit={handleChangePassword}>
-            <div className="mb-3">
-              <label className="form-label">Kata Sandi Lama</label>
-              <input
-                type="password"
-                className="form-control rounded-3"
-                value={passwords.password}
-                onChange={(e) =>
-                  setPasswords({ ...passwords, password: e.target.value })
-                }
-              />
-            </div>
-            <div className="mb-3">
-              <label className="form-label">Kata Sandi Baru</label>
-              <input
-                type="password"
-                className="form-control rounded-3"
-                value={passwords.new_password}
-                onChange={(e) =>
-                  setPasswords({ ...passwords, new_password: e.target.value })
-                }
-              />
-            </div>
-            <button type="submit" className="btn btn-danger rounded-3 px-4">
-              Ubah Kata Sandi
-            </button>
-          </form>
-        </div>
       </div>
-    </div>
+    </>
   );
 }
 

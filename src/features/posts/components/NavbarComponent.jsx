@@ -1,9 +1,24 @@
 // NavbarComponent.jsx
 import React from "react";
-import { Link, useNavigate } from "react-router-dom"; // ✅ Tambahkan import dari react-router-dom
+import { Link, useNavigate } from "react-router-dom";
 
 function NavbarComponent({ profile, handleLogout }) {
-  const navigate = useNavigate(); // ✅ Hook untuk navigasi manual
+  const navigate = useNavigate();
+
+  // Helper function untuk mendapatkan URL foto (Disalin dari ProfilePage)
+  const getPhotoUrl = (photo) => {
+    if (!photo) return "/user.png";
+    if (photo.startsWith("http") || photo.startsWith("https")) return photo;
+    return `${
+      process.env.REACT_APP_DELCOM_BASEURL ||
+      "https://open-api.delcom.org/api/v1"
+    }/${photo}`
+      .replace(/\/+/g, "/")
+      .replace("https:/", "https://");
+  };
+
+  // Ambil URL foto profil yang benar
+  const profilePhotoUrl = getPhotoUrl(profile?.photo);
 
   const profileImageStyle = {
     width: "30px",
@@ -117,10 +132,14 @@ function NavbarComponent({ profile, handleLogout }) {
                   data-bs-toggle="dropdown"
                 >
                   <img
-                    src="/user.png"
+                    // ==============================================
+                    // ✅ PERUBAHAN UTAMA: Menggunakan URL foto profil user
+                    // ==============================================
+                    src={profilePhotoUrl}
                     alt="Profile"
                     className="me-2"
                     style={profileImageStyle}
+                    // ==============================================
                   />
                   <span style={{ fontWeight: 600 }}>
                     {profile?.name || "User"}
@@ -132,7 +151,6 @@ function NavbarComponent({ profile, handleLogout }) {
                   aria-labelledby="profileDropdown"
                 >
                   <li>
-                    {/* ✅ Ganti <a> jadi <Link> agar navigasi ke /profile */}
                     <Link className="dropdown-item" to="/profile">
                       <i className="bi bi-person me-2"></i>Profile
                     </Link>

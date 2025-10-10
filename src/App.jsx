@@ -13,6 +13,7 @@ const PostLayout = lazy(() => import("./features/posts/layouts/PostLayout"));
 const ProfilePage = lazy(() => import("./features/users/pages/ProfilePage"));
 // ✅ TAMBAHKAN: Lazy load SettingsPage
 const SettingsPage = lazy(() => import("./features/users/pages/SettingsPage"));
+const UserLayout = lazy(() => import("./features/users/layouts/UserLayout"));
 
 function App() {
   return (
@@ -46,10 +47,12 @@ function App() {
         <Route path="/" element={<PostLayout />}>
           <Route index element={<HomePage />} />
           <Route path="posts/:postId" element={<DetailPage />} />
-          <Route path="profile" element={<ProfilePage />} />
-          {/* ✅ TAMBAHKAN: Route untuk halaman Settings */}
-          <Route path="settings" element={<SettingsPage />} />
+
           {/* <Route path="posts/:postId/comments" element={<CommentPage />} /> */}
+        </Route>
+        <Route path="/" element={<UserLayout />}>
+          <Route path="profile" element={<ProfilePage />} />
+          <Route path="settings" element={<SettingsPage />} />
         </Route>
       </Routes>
     </Suspense>

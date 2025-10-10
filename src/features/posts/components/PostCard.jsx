@@ -139,14 +139,16 @@ function PostCard({ post, profile, onView, onEdit, onDelete, currentUserId }) {
     border: "none",
   };
 
+  // START PERUBAHAN UTAMA: Menghapus maxHeight dan minHeight dan mengubah objectFit
   const imageStyle = {
     width: "100%",
-    maxHeight: "700px",
-    minHeight: "300px",
-    objectFit: "cover",
+    // maxHeight: "700px", // DIHAPUS
+    // minHeight: "300px", // DIHAPUS
+    objectFit: "contain", // DIUBAH: Menggunakan 'contain' agar gambar menyesuaikan diri tanpa terpotong
     backgroundColor: "#f0f2f5",
     borderBottom: "none",
   };
+  // END PERUBAHAN UTAMA
 
   const postActionsContainerStyle = {
     paddingTop: "12px",

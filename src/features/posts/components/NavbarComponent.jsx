@@ -1,4 +1,5 @@
 // NavbarComponent.jsx
+
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -132,14 +133,10 @@ function NavbarComponent({ profile, handleLogout }) {
                   data-bs-toggle="dropdown"
                 >
                   <img
-                    // ==============================================
-                    // ✅ PERUBAHAN UTAMA: Menggunakan URL foto profil user
-                    // ==============================================
                     src={profilePhotoUrl}
                     alt="Profile"
                     className="me-2"
                     style={profileImageStyle}
-                    // ==============================================
                   />
                   <span style={{ fontWeight: 600 }}>
                     {profile?.name || "User"}
@@ -156,9 +153,10 @@ function NavbarComponent({ profile, handleLogout }) {
                     </Link>
                   </li>
                   <li>
-                    <a className="dropdown-item" href="#">
+                    {/* ✅ PERUBAHAN UTAMA: Mengubah <a> menjadi <Link> dan menetapkan path ke /settings */}
+                    <Link className="dropdown-item" to="/settings">
                       <i className="bi bi-cog me-2"></i>Settings
-                    </a>
+                    </Link>
                   </li>
                   <li>
                     <hr className="dropdown-divider" />

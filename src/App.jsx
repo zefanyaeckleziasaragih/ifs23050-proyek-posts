@@ -8,9 +8,11 @@ const AuthLayout = lazy(() => import("./features/auth/layouts/AuthLayout"));
 const RegisterPage = lazy(() => import("./features/auth/pages/RegisterPage"));
 const HomePage = lazy(() => import("./features/posts/pages/HomePage"));
 const DetailPage = lazy(() => import("./features/posts/pages/DetailPage"));
-// const CommentPage = lazy(() => import("./features/posts/pages/CommentPage")); // <<< TAMBAHKAN INI
+// const CommentPage = lazy(() => import("./features/posts/pages/CommentPage"));
 const PostLayout = lazy(() => import("./features/posts/layouts/PostLayout"));
 const ProfilePage = lazy(() => import("./features/users/pages/ProfilePage"));
+// ✅ TAMBAHKAN: Lazy load SettingsPage
+const SettingsPage = lazy(() => import("./features/users/pages/SettingsPage"));
 
 function App() {
   return (
@@ -44,7 +46,9 @@ function App() {
         <Route path="/" element={<PostLayout />}>
           <Route index element={<HomePage />} />
           <Route path="posts/:postId" element={<DetailPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="profile" element={<ProfilePage />} />
+          {/* ✅ TAMBAHKAN: Route untuk halaman Settings */}
+          <Route path="settings" element={<SettingsPage />} />
           {/* <Route path="posts/:postId/comments" element={<CommentPage />} /> */}
         </Route>
       </Routes>

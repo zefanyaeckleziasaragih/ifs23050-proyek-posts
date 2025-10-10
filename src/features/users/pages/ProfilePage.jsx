@@ -247,7 +247,7 @@ function ProfilePage() {
                 className="bi bi-person-circle"
                 style={{ marginRight: 10, color: PRIMARY_COLOR }}
               ></i>
-              Pengaturan Profil
+              Profil Pengguna
             </h2>
 
             {/* Kontainer Card Utama (Hanya White Background) */}

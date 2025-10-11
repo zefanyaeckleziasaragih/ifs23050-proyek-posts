@@ -1,5 +1,3 @@
-// src/pages/SettingsPage.jsx
-
 import React, { useEffect, useState } from "react";
 import {
   showSuccessDialog,
@@ -11,9 +9,8 @@ function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [fadeIn, setFadeIn] = useState(false);
 
-  // Definisikan kembali konstanta CSS dari ProfilePage
-  const PRIMARY_COLOR = "#667eea"; // (Biru)
-  const ACCENT_COLOR = "#f58529"; // (Oranye)
+  const PRIMARY_COLOR = "#667eea";
+  const ACCENT_COLOR = "#f58529";
 
   useEffect(() => {
     setFadeIn(true);
@@ -43,7 +40,6 @@ function SettingsPage() {
     )}&body=${encodeURIComponent(body)}`;
   };
 
-  // --- Style Disederhanakan (Hanya Light Mode) ---
   const lightModeStyles = {
     mainBg: "#f8f9fa",
     textColor: "#212529",
@@ -112,7 +108,6 @@ function SettingsPage() {
         `}
       </style>
 
-      {/* HAPUS WRAPPER UTAMA DENGAN BACKGROUND DAN MINHEIGHT */}
       <div
         className="main-content"
         style={{ position: "relative", zIndex: 10, paddingBottom: "50px" }}

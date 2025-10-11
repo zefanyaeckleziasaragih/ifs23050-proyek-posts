@@ -1,5 +1,3 @@
-// src/pages/ProfilePage.jsx
-
 import React, { useEffect, useState } from "react";
 import userApi from "../api/userApi";
 import {
@@ -21,13 +19,8 @@ function ProfilePage() {
     new_password: "",
   });
 
-  // Hapus state dan useEffect fadeIn yang tidak perlu
-  // const [fadeIn, setFadeIn] = useState(false);
-  // useEffect(() => { setFadeIn(true); }, []);
-
-  // Definisikan ulang konstanta CSS untuk styling komponen internal
   const PRIMARY_COLOR = "#667eea";
-  const ACCENT_COLOR = "#dd2a7b"; // Mengambil warna pink dari border foto
+  const ACCENT_COLOR = "#dd2a7b";
 
   // --- FUNGSI FETCH PROFILE, UPDATE, UPLOAD, CHANGE PASSWORD (TETAP SAMA) ---
 
@@ -171,12 +164,6 @@ function ProfilePage() {
 
   return (
     <>
-      {/* HAPUS SEMUA TAG <style> DAN CSS GLOBAL DI SINI. 
-        Ganti dengan import CSS/SCSS global atau gunakan styling inline sederhana 
-        jika tidak bisa menghapus semua custom style.
-        Untuk kebutuhan saat ini, kita akan **mempertahankan custom style** yang
-        relevan dengan komponen *input* dan *button* saja dan menghapus sisanya.
-      */}
       <style>
         {`
           /* Animasi fadeInUp dipertahankan jika Anda ingin efek muncul per halaman */
@@ -237,7 +224,6 @@ function ProfilePage() {
         `}
       </style>
 
-      {/* HAPUS WRAPPER UTAMA DENGAN BACKGROUND DAN MINHEIGHT */}
       <div
         className="main-content"
         style={{ position: "relative", zIndex: 10, paddingBottom: "50px" }}
@@ -287,8 +273,8 @@ function ProfilePage() {
                     height="100"
                     style={{
                       objectFit: "cover",
-                      border: `4px solid ${ACCENT_COLOR}`, // Menggunakan ACCENT_COLOR
-                      boxShadow: `0 0 0 5px ${ACCENT_COLOR}20`, // Menggunakan ACCENT_COLOR
+                      border: `4px solid ${ACCENT_COLOR}`,
+                      boxShadow: `0 0 0 5px ${ACCENT_COLOR}20`,
                       transition: "all 0.3s ease",
                     }}
                   />

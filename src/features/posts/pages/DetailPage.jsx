@@ -8,8 +8,6 @@ import {
   setIsPostActionCreator,
   asyncPostComment,
   asyncDeleteComment,
-  // ⭐️ Tambahkan asyncChangeCoverPost jika fitur Change Cover memiliki action tersendiri
-  // Jika tidak ada, pastikan modal ChangeCoverModal memanggil action yang benar.
 } from "../states/action";
 import { formatDate, showConfirmDialog } from "../../../helpers/toolsHelper";
 import ChangeCoverModal from "../modals/ChangeCoverModal";
@@ -109,23 +107,24 @@ function DetailPage() {
   const GRADIENT_BG =
     "linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)"; // Gradien Penuh dari HomePage
 
-  // ⭐️ FUNGSI BARU/PERBAIKAN: Untuk menutup modal dan me-refresh data
+  // ⭐️ FUNGSI UTAMA YANG DIPERBAIKI
+  // Fungsi ini dipanggil saat ChangeCoverModal ditutup.
   const handleCoverModalClose = (coverUpdated) => {
     setShowChangeCoverModal(false);
-    // Hanya refresh jika update cover berhasil (diasumsikan ChangeCoverModal
-    // memberikan sinyal melalui argumen 'coverUpdated' yang bernilai true)
-    if (coverUpdated) {
+
+    // Asumsi: ChangeCoverModal mengirimkan 'true' jika cover berhasil diupdate.
+    if (coverUpdated === true) {
       // Panggil asyncSetPost untuk mengambil data post terbaru dari API
-      // Menunda sebentar untuk memastikan modal sudah tertutup dan API selesai
+      // Penundaan 300ms untuk memastikan proses update selesai dan re-render terjadi.
       setTimeout(() => {
         dispatch(asyncSetPost(postId));
-      }, 300); // Penundaan lebih singkat (300ms) untuk respons yang lebih cepat
+      }, 300);
     }
   };
 
   return (
     <>
-      {/* Style CSS Konsisten dengan HomePage */}
+      {/* Style CSS Konsisten dengan HomePage (TIDAK DIUBAH) */}
       <style>
         {`
           @keyframes fadeInUp {
@@ -178,7 +177,7 @@ function DetailPage() {
         `}
       </style>
 
-      {/* Kontainer Utama dengan Full Screen Background Gradien dari HomePage */}
+      {/* Kontainer Utama dengan Full Screen Background Gradien dari HomePage (TIDAK DIUBAH) */}
       <div
         style={{
           minHeight: "100vh",
@@ -189,7 +188,7 @@ function DetailPage() {
           paddingTop: "90px", // Ruang untuk fixed Navbar
         }}
       >
-        {/* Animated Background Circles (Dibuat Mirip HomePage) */}
+        {/* Animated Background Circles (TIDAK DIUBAH) */}
         <div
           style={{
             position: "fixed",
@@ -219,7 +218,7 @@ function DetailPage() {
           }}
         />
 
-        {/* Main Content Container dengan Background Putih Transparan */}
+        {/* Main Content Container (TIDAK DIUBAH) */}
         <div
           className="main-content"
           style={{ position: "relative", zIndex: 10, paddingBottom: "40px" }}
@@ -228,7 +227,7 @@ function DetailPage() {
             className="container-fluid"
             style={{ maxWidth: 800, margin: "0 auto", padding: "0 15px" }}
           >
-            {/* Header Postingan */}
+            {/* Header Postingan (TIDAK DIUBAH) */}
             <div
               className="d-flex justify-content-between align-items-center mb-4"
               style={{ animation: "fadeInUp 0.6s ease-out" }}
@@ -249,7 +248,7 @@ function DetailPage() {
                 Detail Postingan
               </h1>
             </div>
-            {/* Garis pemisah aesthetic */}
+            {/* Garis pemisah aesthetic (TIDAK DIUBAH) */}
             <div
               style={{
                 height: "4px",
@@ -261,7 +260,7 @@ function DetailPage() {
               }}
             />
             <div className="post-content-container">
-              {/* Kartu Postingan Utama */}
+              {/* Kartu Postingan Utama (TIDAK DIUBAH) */}
               <div
                 className="card mb-5 hover-scale-detail"
                 style={{
@@ -362,7 +361,7 @@ function DetailPage() {
                 </div>
               </div>
 
-              {/* Comments Section */}
+              {/* Comments Section (TIDAK DIUBAH) */}
               <div
                 className="card mb-4"
                 style={{
@@ -387,7 +386,7 @@ function DetailPage() {
                   {post.comments?.length || 0} Komentar
                 </div>
 
-                {/* List Komentar */}
+                {/* List Komentar (TIDAK DIUBAH) */}
                 <div
                   className="list-group list-group-flush"
                   style={{ maxHeight: "60vh", overflowY: "auto" }}
@@ -445,7 +444,7 @@ function DetailPage() {
                 </div>
               </div>
 
-              {/* Input Komentar Baru */}
+              {/* Input Komentar Baru (TIDAK DIUBAH) */}
               <div
                 className="card"
                 style={{
@@ -496,7 +495,7 @@ function DetailPage() {
       {/* Modal */}
       <ChangeCoverModal
         show={showChangeCoverModal}
-        // ⭐️ PERBAIKAN UTAMA: Menggunakan fungsi handleCoverModalClose yang baru
+        // ⭐️ PERBAIKAN: Mengganti fungsi inline dengan fungsi handleCoverModalClose yang baru
         onClose={handleCoverModalClose}
         post={post}
       />

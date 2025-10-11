@@ -73,14 +73,12 @@ Untuk menjalankan proyek ini (dengan asumsi sudah ada _boilerplate_ React/Redux)
 
 1.  **Dependencies:** Pastikan Anda telah menginstal paket-paket berikut:
     ```bash
-    npm install react react-dom react-redux react-router-dom
+    bun install react react-dom react-redux react-router-dom
     # Tambahkan library untuk dialog
-    # npm install sweetalert2 (atau library dialog yang digunakan toolsHelper)
+    # bun install sweetalert2 (atau library dialog yang digunakan toolsHelper)
     ```
 2.  **Jalankan Aplikasi:**
     ```bash
-    npm start
-    # atau
-    yarn start
+    bun run dev
     ```
 3.  **Akses:** Komponen `HomePage` akan terlihat di rute utama aplikasi Anda (`/` atau sesuai konfigurasi router).

@@ -6,6 +6,7 @@ Url proyek resmi dapat diakses disini: https://11s23050-proyek-posts.vercel.app/
 
 ## 👤 Informasi Pengembang
 
+| :------- | :----------------------- |
 | **Nama** | Zefanya Ecklezia Saragih |
 | **NIM** | 11S23050 |
 

@@ -227,7 +227,8 @@ function DetailPage() {
               >
                 <i
                   className="bi bi-card-heading me-3"
-                  style={{ color: "#FFD700" }} // Ganti warna icon menjadi emas (contoh)
+                  // ✅ PERBAIKAN: Ganti warna ikon menjadi putih
+                  style={{ color: "#FFFFFF" }}
                 ></i>
                 Detail Postingan
               </h1>
@@ -236,7 +237,8 @@ function DetailPage() {
             <div
               style={{
                 height: "4px",
-                background: `linear-gradient(90deg, #FFD700, #FF69B4)`, // Ganti warna garis (emas ke pink)
+                // ✅ PERBAIKAN: Ganti warna gradien garis menjadi Putih ke Transparan/Putih
+                background: `linear-gradient(90deg, #FFFFFF, rgba(255, 255, 255, 0.5))`,
                 borderRadius: "5px",
                 marginBottom: "30px",
                 animation: "fadeInUp 0.6s ease-out 0.1s backwards",

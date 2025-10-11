@@ -2,6 +2,8 @@
 
 Aplikasi website ini adalah bagian dari proyek UTS untuk mata kuliah Pengembangan Aplikasi Berbasis Web (PABWE) yang fokus pada implementasi antarmuka pengguna (UI) untuk manajemen postingan, menggunakan **React** dan **Redux** untuk manajemen state.
 
+Url proyek resmi dapat diakses disini: https://11s23050-proyek-posts.vercel.app/
+
 ## 👤 Informasi Pengembang
 
 | Atribut  | Detail                   |

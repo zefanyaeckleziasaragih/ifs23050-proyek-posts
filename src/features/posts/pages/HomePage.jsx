@@ -98,6 +98,10 @@ function HomePage() {
   const PRIMARY_COLOR = "#667eea";
   const ACCENT_COLOR = "#764ba2";
 
+  // ✅ PENTING: Tentukan lebar sidebar Anda di sini
+  const SIDEBAR_WIDTH = "250px";
+  // Anda harus mengganti '250px' dengan lebar sidebar aplikasi Anda yang sesungguhnya.
+
   return (
     <>
       {/* Tambahkan Style Global untuk Animasi Konsisten */}
@@ -105,17 +109,11 @@ function HomePage() {
         {`
           @keyframes floatAnimation {
             0%, 100% { transform: translateY(0px) scale(1); }
-            50% { transform: translateY(-5px) scale(1.01); } /* Dibuat lebih kecil dari LoginPage agar tidak terlalu agresif */
+            50% { transform: translateY(-5px) scale(1.01); }
           }
           @keyframes fadeInUp {
-            from {
-              opacity: 0;
-              transform: translateY(30px); /* Dibuat sama dengan LoginPage */
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
           }
           .home-input-focus:focus {
             border-color: ${PRIMARY_COLOR} !important;
@@ -124,7 +122,7 @@ function HomePage() {
             transition: all 0.3s ease;
           }
           .home-btn-gradient {
-            background: linear-gradient(135deg, #f58529 0%, #dd2a7b 100%); /* Gradient ala Instagram/Post Card */
+            background: linear-gradient(135deg, #f58529 0%, #dd2a7b 100%);
             transition: all 0.3s ease;
           }
           .home-btn-gradient:hover:not(:disabled) {
@@ -137,17 +135,20 @@ function HomePage() {
         `}
       </style>
 
-      {/* Kontainer Utama dengan Full Screen Background & Padding agar konten tidak melebar full screen */}
+      {/* Kontainer Utama dengan Full Screen Background */}
+      {/* ✅ PERBAIKAN: Gunakan width: 100vw untuk memastikan full screen, dan sembunyikan overflow horizontal */}
       <div
         style={{
           minHeight: "100vh",
           padding: 0,
-          background: GRADIENT_BG, // Menggunakan BG Gradien dari LoginPage
+          background: GRADIENT_BG,
           transition: "opacity 0.6s ease",
           opacity: fadeIn ? 1 : 0,
+          width: "100vw", // PENTING: Memastikan mengambil seluruh lebar viewport
+          overflowX: "hidden", // PENTING: Mencegah scroll horizontal (garis putih)
         }}
       >
-        {/* Animated Background Circles - Dibuat Fixed agar tidak ikut konten (Dibuat mirip LoginPage) */}
+        {/* Animated Background Circles (tetap fixed) */}
         <div
           style={{
             position: "fixed",
@@ -180,27 +181,40 @@ function HomePage() {
         {/* Main Content Container */}
         <div
           className="main-content"
-          style={{ position: "relative", zIndex: 10 }}
+          style={{
+            position: "relative",
+            zIndex: 10,
+            // ✅ PERBAIKAN UTAMA: Geser konten ke kanan sebesar lebar sidebar
+            marginLeft: SIDEBAR_WIDTH,
+            // ✅ PERBAIKAN UTAMA: Pastikan lebar mengambil seluruh sisa layar
+            width: `calc(100vw - ${SIDEBAR_WIDTH})`,
+          }}
         >
           <div
-            className="container-fluid pt-5 pb-5" // Tambah padding top & bottom
-            style={{ maxWidth: 1000, margin: "0 auto", padding: "0 15px" }}
+            className="container-fluid pt-5 pb-5"
+            style={{
+              // ✅ MODIFIKASI: Hapus maxWidth, biarkan width: 100% dari parent (main-content)
+              // Jika Anda tetap ingin membatasi lebar konten:
+              maxWidth: 1000,
+              margin: "0 auto", // Tetap menggunakan auto untuk memusatkan
+              // Tambahkan padding yang cukup di kiri (jarak dari sidebar) dan kanan
+              padding: "0 50px",
+            }}
           >
-            {/* ===== Jumlah Post & Filter Kontrol (Card Aesthetic Instagram) ===== */}
+            {/* ... Kontrol Post dan Filter ... */}
             <div className="row mb-5">
               <div className="col-12">
                 <div
                   className="card text-white"
                   style={{
                     border: "none",
-                    borderRadius: 24, // Lebih rounded, konsisten dengan LoginPage
+                    borderRadius: 24,
                     padding: 0,
                     overflow: "hidden",
-                    // Gradient yang lebih menarik & konsisten
                     background:
                       "linear-gradient(45deg, #515bd4 0%, #dd2a7b 50%, #f58529 100%)",
-                    boxShadow: "0 20px 60px rgba(0,0,0,0.3)", // Shadow lebih tegas
-                    animation: "fadeInUp 0.6s ease-out", // Gunakan fadeInUp
+                    boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
+                    animation: "fadeInUp 0.6s ease-out",
                     transform: "translateY(0)",
                   }}
                 >
@@ -222,7 +236,7 @@ function HomePage() {
                       </h5>
                       <div
                         style={{
-                          fontSize: "3.5rem", // Ukuran Font Lebih Besar
+                          fontSize: "3.5rem",
                           fontWeight: 800,
                           marginTop: 10,
                           lineHeight: 1,
@@ -263,14 +277,14 @@ function HomePage() {
                           Tampilkan Postingan
                         </label>
                         <select
-                          className="form-select home-input-focus" // Class focus baru
+                          className="form-select home-input-focus"
                           value={ownerFilter}
                           onChange={(e) => changeOwnerFilter(e.target.value)}
                           style={{
                             borderRadius: 12,
-                            padding: "12px 18px", // Padding lebih besar
+                            padding: "12px 18px",
                             boxShadow: "inset 0 1px 4px rgba(0,0,0,0.2)",
-                            border: "2px solid #e0e0e0", // Border lebih jelas
+                            border: "2px solid #e0e0e0",
                             fontWeight: 500,
                             backgroundColor: "rgba(255,255,255,0.95)",
                             color: "#333",
@@ -282,10 +296,10 @@ function HomePage() {
                       </div>
 
                       <button
-                        className="btn w-100 home-btn-gradient" // Class gradient baru
+                        className="btn w-100 home-btn-gradient"
                         onClick={() => setShowAddModal(true)}
                         style={{
-                          color: "white", // Ubah warna teks menjadi putih
+                          color: "white",
                           borderRadius: 12,
                           padding: "0.75rem 0",
                           fontWeight: 700,
@@ -296,10 +310,10 @@ function HomePage() {
                         }}
                         onMouseOver={(e) =>
                           (e.currentTarget.style.transform = "translateY(-3px)")
-                        } // Hover dipindahkan ke CSS Class
+                        }
                         onMouseOut={(e) =>
                           (e.currentTarget.style.transform = "translateY(0)")
-                        } // Hover dipindahkan ke CSS Class
+                        }
                       >
                         <i
                           className="bi bi-plus-circle-fill"
@@ -313,16 +327,16 @@ function HomePage() {
               </div>
             </div>
 
-            {/* ===== AREA DAFTAR POST - Background Putih Transparan agar Konten Menonjol (Dipercantik) ===== */}
+            {/* ===== AREA DAFTAR POST ===== */}
             <div
               className="row justify-content-center"
               style={{
-                background: "rgba(255, 255, 255, 0.95)", // Opacity lebih tinggi
-                backdropFilter: "blur(10px)", // Efek blur tipis
-                borderRadius: "24px", // Radius lebih besar
-                padding: "40px", // Padding lebih besar
-                boxShadow: "0 20px 60px rgba(0,0,0,0.3)", // Shadow lebih tegas
-                marginBottom: "50px", // Tambah jarak di bawah
+                background: "rgba(255, 255, 255, 0.95)",
+                backdropFilter: "blur(10px)",
+                borderRadius: "24px",
+                padding: "40px",
+                boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
+                marginBottom: "50px",
                 animation: "fadeInUp 0.6s ease-out 0.2s backwards",
               }}
             >
@@ -369,13 +383,13 @@ function HomePage() {
                           overflow: "hidden",
                           boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
                           backgroundColor: "#fff",
-                          border: "1px solid #e0e0e0", // Border lebih terang
+                          border: "1px solid #e0e0e0",
                           transition: "all 0.3s ease",
                         }}
                         onMouseOver={(e) => {
                           e.currentTarget.style.boxShadow =
                             "0 10px 25px rgba(0,0,0,0.15)";
-                          e.currentTarget.style.transform = "translateY(-5px)"; // Efek hover lebih menonjol
+                          e.currentTarget.style.transform = "translateY(-5px)";
                         }}
                         onMouseOut={(e) => {
                           e.currentTarget.style.boxShadow =

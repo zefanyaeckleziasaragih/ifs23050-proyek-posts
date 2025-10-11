@@ -1,12 +1,9 @@
-// NavbarComponent.jsx
-
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 function NavbarComponent({ profile, handleLogout }) {
   const navigate = useNavigate();
 
-  // Helper function untuk mendapatkan URL foto (Disalin dari ProfilePage)
   const getPhotoUrl = (photo) => {
     if (!photo) return "/user.png";
     if (photo.startsWith("http") || photo.startsWith("https")) return photo;
@@ -18,7 +15,6 @@ function NavbarComponent({ profile, handleLogout }) {
       .replace("https:/", "https://");
   };
 
-  // Ambil URL foto profil yang benar
   const profilePhotoUrl = getPhotoUrl(profile?.photo);
 
   const profileImageStyle = {
@@ -153,7 +149,6 @@ function NavbarComponent({ profile, handleLogout }) {
                     </Link>
                   </li>
                   <li>
-                    {/* ✅ PERUBAHAN UTAMA: Mengubah <a> menjadi <Link> dan menetapkan path ke /settings */}
                     <Link className="dropdown-item" to="/settings">
                       <i className="bi bi-cog me-2"></i>Settings
                     </Link>
@@ -181,3 +176,46 @@ function NavbarComponent({ profile, handleLogout }) {
 }
 
 export default NavbarComponent;
+
+/*
+ * Dokumentasi Kode
+ *
+ * NavbarComponent adalah komponen fungsional React yang merepresentasikan bilah navigasi (navbar) untuk aplikasi.
+ * Komponen ini dirancang untuk menjadi bilah navigasi atas yang tetap (*fixed-top*) dan responsif (menggunakan Bootstrap).
+ *
+ * Dependencies:
+ * - React
+ * - Link dari "react-router-dom" untuk navigasi internal tanpa memuat ulang halaman.
+ * - useNavigate dari "react-router-dom" (meskipun tidak digunakan secara langsung dalam JSX, tetap diimpor).
+ *
+ * Props:
+ * - profile: Objek yang berisi data profil pengguna yang sedang login (setidaknya harus memiliki properti `photo` dan `name`).
+ * - handleLogout: Fungsi callback yang akan dipanggil ketika tombol "Logout" diklik.
+ *
+ * Fungsi Pembantu:
+ * 1. getPhotoUrl(photo):
+ * - Fungsi ini menentukan URL foto profil yang benar.
+ * - Jika `photo` kosong, mengembalikan `/user.png` (foto default).
+ * - Jika `photo` sudah merupakan URL lengkap (dimulai dengan "http" atau "https"), mengembalikannya.
+ * - Jika tidak, ia membuat URL lengkap dengan menggabungkan BASE_URL dari variabel lingkungan
+ * (`REACT_APP_DELCOM_BASEURL` atau nilai default) dengan path foto, dan membersihkan slash ganda.
+ *
+ * Styling:
+ * - `profileImageStyle`: Objek style inline untuk mengatur tampilan gambar profil (ukuran, bentuk lingkaran, border, dan shadow).
+ * - `PRIMARY_COLOR` & `LOGOUT_COLOR`: Konstanta warna yang digunakan dalam CSS inline untuk konsistensi.
+ * - Komponen menggunakan tag `<style>` dengan template literal untuk menyuntikkan CSS kustom ke dalam dokumen.
+ * - CSS kustom memberikan gaya gradien latar belakang yang menarik (`linear-gradient`) ke navbar, shadow, dan border bawah.
+ * - Mengatur gaya untuk `navbar-brand` (logo), dan memberikan efek transisi/animasi pada elemen dropdown.
+ *
+ * Struktur JSX (Tampilan):
+ * - Navbar adalah elemen `<nav>` dengan kelas Bootstrap `navbar navbar-expand-md navbar-dark fixed-top custom-navbar`.
+ * - Brand (Logo): Berupa `<Link>` ke halaman utama (`/`) yang menampilkan gambar logo dan teks "Post".
+ * - Toggler: Tombol untuk mengaktifkan/menonaktifkan menu pada tampilan mobile (`navbar-toggler`).
+ * - Dropdown Menu Profil:
+ * - Terletak di sisi kanan (`ms-auto`).
+ * - Dropdown toggle menampilkan gambar profil pengguna (`profilePhotoUrl`) dengan gaya kustom, dan nama pengguna (`profile?.name`).
+ * - Dropdown item berisi link:
+ * - `<Link>` ke `/profile` (untuk melihat profil).
+ * - `<Link>` ke `/settings` (untuk pengaturan).
+ * - `<button>` untuk **Logout** yang memanggil fungsi `handleLogout` dari props.
+ */

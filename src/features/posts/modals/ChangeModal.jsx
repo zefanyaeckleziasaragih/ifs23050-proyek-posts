@@ -14,7 +14,6 @@ import {
 function ChangeModal({ show, onClose, postId }) {
   const dispatch = useDispatch();
 
-  // State dari reducer
   const isPostChange = useSelector((state) => state.isPostChange);
   const isPostChanged = useSelector((state) => state.isPostChanged);
   const post = useSelector((state) => state.post);
@@ -24,14 +23,12 @@ function ChangeModal({ show, onClose, postId }) {
   const [cover, changeCover] = useState(null);
   const [description, changeDescription] = useState("");
 
-  // 1. Ambil data post sesuai postId
   useEffect(() => {
     if (postId) {
       dispatch(asyncSetPost(postId));
     }
   }, [postId]);
 
-  // 2. Ubah nilai pada input
   useEffect(() => {
     if (post) {
       changeDescription(post.description);
@@ -40,14 +37,12 @@ function ChangeModal({ show, onClose, postId }) {
     }
   }, [post]);
 
-  // 3. Cek apakah isPostChange sudah selesai
   useEffect(() => {
     if (isPostChange) {
       setLoading(false);
       dispatch(setIsPostChangeActionCreator(false));
       if (isPostChanged) {
         dispatch(setIsPostChangedActionCreator(false));
-        // perbarui data posts
         dispatch(asyncSetPosts());
         onClose();
       }
@@ -62,7 +57,6 @@ function ChangeModal({ show, onClose, postId }) {
     }
   }, [show]);
 
-  // Fungsi save
   function handleSave() {
     if (!cover) {
       showErrorDialog("Cover tidak boleh kosong");
@@ -165,3 +159,66 @@ function ChangeModal({ show, onClose, postId }) {
 }
 
 export default ChangeModal;
+
+/*
+ * Dokumentasi Kode
+ *
+ * ChangeModal adalah komponen modal fungsional React yang digunakan untuk mengedit deskripsi dan (opsional) cover dari post yang sudah ada.
+ * Komponen ini menggunakan `framer-motion` untuk animasi dan Redux untuk memuat data post serta menangani proses pengeditan.
+ *
+ * Dependencies:
+ * - motion, AnimatePresence dari "framer-motion": Untuk animasi deklaratif.
+ * - useEffect, useState dari "react": Hook standar React.
+ * - useInput: Hook yang diimpor, meskipun implementasi `changeDescription` dan `changeCover` langsung menggunakan `useState` setters.
+ * - showErrorDialog: Fungsi helper untuk menampilkan notifikasi kesalahan.
+ * - useDispatch, useSelector dari "react-redux": Untuk interaksi dengan Redux store.
+ * - asyncSetIsPostChange, asyncSetPost, asyncSetPosts, setIsPostChangeActionCreator, setIsPostChangedActionCreator: Action Redux.
+ *
+ * Props:
+ * - show: Boolean, mengontrol visibilitas modal.
+ * - onClose: Fungsi callback untuk menutup modal.
+ * - postId: ID dari post yang akan diedit.
+ *
+ * State:
+ * - Redux State:
+ * - isPostChange: Boolean, menunjukkan status proses pengeditan post.
+ * - isPostChanged: Boolean, menunjukkan apakah pengeditan post berhasil.
+ * - post: Objek data post yang saat ini sedang dimuat atau diedit (diambil berdasarkan `postId`).
+ * - Local State:
+ * - loading: Boolean, mengontrol tampilan spinner pada tombol Simpan.
+ * - cover: Menyimpan nilai file gambar baru (Objek File) atau URL cover lama (String).
+ * - description: String, nilai input textarea deskripsi.
+ *
+ * Lifecycle Hooks:
+ *
+ * 1. Pemuatan Data Post Awal (Dependensi: `[postId]`):
+ * - Ketika `postId` tersedia, mendispatch `asyncSetPost(postId)` untuk memuat data post ke Redux store.
+ *
+ * 2. Inisialisasi Input (Dependensi: `[post]`):
+ * - Ketika objek `post` dari Redux tersedia, mengisi state lokal `description` dan `cover` dengan data yang ada (`post.description` dan `post.cover`) agar form menampilkan nilai awal.
+ *
+ * 3. Penanganan Status Pengeditan (Dependensi: `[isPostChange]`):
+ * - Dijalankan setelah operasi pengeditan post di Redux selesai.
+ * - Mengatur `loading` menjadi false.
+ * - Mengatur ulang `isPostChange` di Redux.
+ * - Jika `isPostChanged` true (berhasil):
+ * - Mengatur ulang `isPostChanged` di Redux.
+ * - Mendispatch `asyncSetPosts()` untuk memuat ulang daftar post di halaman beranda.
+ * - Menutup modal (`onClose()`).
+ *
+ * 4. Efek Kontrol Overflow Body (Dependensi: `[show]`):
+ * - Mengontrol scrolling pada `document.body` saat modal ditampilkan/ditutup.
+ *
+ * Fungsi handleSave():
+ * - Melakukan validasi dasar pada `cover` dan `description`.
+ * - Jika validasi berhasil:
+ * - Mengatur `loading` menjadi true.
+ * - Mendispatch `asyncSetIsPostChange` dengan `postId`, data `cover`, dan `description` untuk mengirimkan perubahan ke API.
+ *
+ * Rendering:
+ * - Menggunakan `AnimatePresence` dan `motion.div` untuk animasi modal.
+ * - Formulir memungkinkan pengguna mengubah file cover (input type="file") dan deskripsi (textarea).
+ * - Catatan: Input `type="file"` akan selalu mengembalikan file baru atau `null`. Jika pengguna tidak memilih file baru, nilai `cover` akan dikirim sesuai nilai awal dari `post.cover`.
+ * - Tombol "Simpan" menampilkan spinner loading saat `loading` true.
+ * - Mengembalikan `null` jika objek `post` belum tersedia, mencegah modal render sebelum data dimuat.
+ */

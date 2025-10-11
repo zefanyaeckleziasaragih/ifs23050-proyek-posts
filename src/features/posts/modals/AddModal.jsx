@@ -13,7 +13,6 @@ import {
 function AddModal({ show, onClose }) {
   const dispatch = useDispatch();
 
-  // State dari reducer
   const isPostAdd = useSelector((state) => state.isPostAdd);
   const isPostAdded = useSelector((state) => state.isPostAdded);
 
@@ -22,14 +21,12 @@ function AddModal({ show, onClose }) {
   const [cover, setCover] = useState(null);
   const [description, changeDescription] = useInput("");
 
-  // 1. Cek apakah isPostAdd sudah selesai
   useEffect(() => {
     if (isPostAdd) {
       setLoading(false);
       dispatch(setIsPostAddActionCreator(false));
       if (isPostAdded) {
         dispatch(setIsPostAddedActionCreator(false));
-        // perbarui data posts
         dispatch(asyncSetPosts());
         onClose();
       }
@@ -44,7 +41,6 @@ function AddModal({ show, onClose }) {
     }
   }, [show]);
 
-  // Fungsi save
   function handleSave() {
     if (!cover) {
       showErrorDialog("Judul tidak boleh kosong");
@@ -145,3 +141,63 @@ function AddModal({ show, onClose }) {
 }
 
 export default AddModal;
+
+/*
+ * Dokumentasi Kode
+ *
+ * AddModal adalah komponen fungsional React yang menampilkan modal untuk menambahkan kiriman (post) baru.
+ * Komponen ini menggunakan `framer-motion` untuk animasi modal dan Redux untuk mengelola status penambahan post ke API.
+ *
+ * Dependencies:
+ * - motion, AnimatePresence dari "framer-motion": Untuk animasi deklaratif.
+ * - useEffect, useState dari "react": Hook standar React.
+ * - useInput: Custom hook untuk mengelola input teks (deskripsi).
+ * - showErrorDialog: Fungsi helper untuk menampilkan pesan kesalahan.
+ * - useDispatch, useSelector dari "react-redux": Untuk interaksi dengan Redux store.
+ * - asyncSetIsPostAdd, asyncSetPosts, setIsPostAddActionCreator, setIsPostAddedActionCreator: Action Redux.
+ *
+ * Props:
+ * - show: Boolean, mengontrol apakah modal harus ditampilkan.
+ * - onClose: Fungsi callback yang dipanggil untuk menutup modal.
+ *
+ * State:
+ * - Redux State:
+ * - isPostAdd: Boolean, menunjukkan proses penambahan post sedang berlangsung/sudah selesai.
+ * - isPostAdded: Boolean, menunjukkan apakah post berhasil ditambahkan.
+ * - Local State:
+ * - loading: Boolean, mengontrol tampilan spinner pada tombol Simpan.
+ * - cover: Objek File, menyimpan file gambar cover yang dipilih.
+ * - description: String, nilai input textarea deskripsi (dikelola oleh `useInput`).
+ *
+ * Lifecycle Hooks:
+ *
+ * 1. Efek Penanganan Status Post (Dependensi: `[isPostAdd]`):
+ * - Dijalankan ketika status `isPostAdd` (dari Redux) berubah.
+ * - Jika `isPostAdd` true, artinya operasi post telah selesai (berhasil atau gagal).
+ * - Mengatur `loading` menjadi false.
+ * - Mengatur ulang `isPostAdd` di Redux menjadi false.
+ * - Jika `isPostAdded` true (post berhasil), akan:
+ * - Mengatur ulang `isPostAdded` di Redux menjadi false.
+ * - Memuat ulang daftar post (`dispatch(asyncSetPosts())`) untuk memperbarui tampilan.
+ * - Menutup modal (`onClose()`).
+ *
+ * 2. Efek Kontrol Overflow Body (Dependensi: `[show]`):
+ * - Mencegah scrolling pada body di belakang modal dengan mengatur `document.body.style.overflow = "hidden"` ketika modal ditampilkan (`show` true).
+ * - Mengatur ulang ke `auto` ketika modal ditutup.
+ *
+ * Fungsi handleSave():
+ * - Fungsi yang dipanggil saat tombol Simpan diklik.
+ * - Melakukan validasi dasar: memastikan `cover` (gambar) dan `description` tidak kosong, menampilkan `showErrorDialog` jika gagal.
+ * - Jika validasi berhasil:
+ * - Mengatur `loading` menjadi true (menampilkan spinner).
+ * - Mendispatch `asyncSetIsPostAdd` dengan data `cover` dan `description` untuk memulai proses penambahan post ke API.
+ *
+ * Rendering (Menggunakan Framer Motion):
+ * - `<AnimatePresence>`: Memastikan komponen anak dianimasikan saat masuk atau keluar.
+ * - Backdrop: `motion.div` yang mengatur latar belakang gelap.
+ * - Animasi: Fade in/out opacity.
+ * - Modal: `motion.div` utama modal.
+ * - Animasi: Fade in/out dan pergeseran vertikal (`y: -50` ke `y: 0`) menggunakan transisi `spring` untuk efek yang lebih alami.
+ * - Konten Modal: Form untuk mengunggah `Cover` (input type="file") dan memasukkan `Deskripsi` (textarea).
+ * - Tombol Simpan: Ditampilkan sebagai spinner *loading* saat `loading` true, atau sebagai tombol Simpan yang memanggil `handleSave` saat false.
+ */

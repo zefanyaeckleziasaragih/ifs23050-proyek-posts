@@ -1,4 +1,3 @@
-// PostCard.jsx
 import React, { useState, useEffect } from "react";
 import { formatDate } from "../../../helpers/toolsHelper";
 import { useNavigate } from "react-router-dom";
@@ -7,59 +6,48 @@ import { useDispatch } from "react-redux";
 
 function PostCard({ post, profile, onView, onEdit, onDelete, currentUserId }) {
   const navigate = useNavigate();
-  // Destructuring diperbaiki untuk kompatibilitas post structure yang lebih baik
   const { id, description, cover, created_at } = post;
   const dispatch = useDispatch();
 
-  // Inisialisasi state
   const initialLikeCount = post.likes?.length || 0;
-  // Asumsi post.likes berisi array of user IDs
   const initialIsLiked = post.likes?.includes(profile?.id) || false;
 
   const [isLiked, setIsLiked] = useState(initialIsLiked);
   const [likeCount, setLikeCount] = useState(initialLikeCount);
 
-  // Check if current user is the post author
   const isOwnPost =
     post?.user?.id === profile?.id ||
     post?.author?.id === profile?.id ||
     String(post?.user_id) === String(profile?.id);
 
-  // Update like count and like status when post data changes
   useEffect(() => {
     setLikeCount(post.likes?.length || 0);
-    // Asumsi post.likes adalah array of user IDs
     setIsLiked(post.likes?.includes(profile?.id) || false);
   }, [post.likes, profile?.id]);
 
   const handleLike = () => {
-    // Prevent liking own post
     if (isOwnPost) {
       console.log("Tidak dapat melakukan like pada postingan sendiri");
       return;
     }
 
     if (isLiked) {
-      // Unlike
       setIsLiked(false);
       setLikeCount((prev) => prev - 1);
       dispatch(asyncLikePost(id, 0));
     } else {
-      // Like
       setIsLiked(true);
       setLikeCount((prev) => prev + 1);
       dispatch(asyncLikePost(id, 1));
     }
   };
 
-  // Ambil info dari struktur yang benar
   const username = post?.user?.name || post?.author?.name || "Pengguna Anonim";
-  // Gunakan placeholder default yang lebih baik jika profile.photo tidak ada
   const profilePicture =
     post?.user?.photo || post?.author?.photo || "/user.png";
 
   const shortDescription =
-    description && description.length > 150 // Perpanjang sedikit deskripsi singkat
+    description && description.length > 150
       ? description.substring(0, 150) + "..."
       : description;
 
@@ -67,9 +55,6 @@ function PostCard({ post, profile, onView, onEdit, onDelete, currentUserId }) {
     navigate(`/posts/${id}`);
   };
 
-  // ===============================================
-  // START: Aesthetic Enhancements (PENYESUAIAN FONT USERNAME CAPTION & ICON KOMENTAR)
-  // ===============================================
   const ACCENT_GRADIENT_PINK =
     "linear-gradient(45deg, #f5576c 0%, #f093fb 100%)";
   const LIKE_ICON_COLOR = "#FF4500";
@@ -78,9 +63,9 @@ function PostCard({ post, profile, onView, onEdit, onDelete, currentUserId }) {
   const TEXT_SECONDARY_LIGHT = "#7f8c8d";
   const PRIMARY_COLOR_BLUE = "#007bff";
 
-  const FONT_SIZE_USERNAME_HEADER = "1.25rem"; // Username di header tetap besar
-  const FONT_SIZE_USERNAME_CAPTION = "1.1rem"; // **PERUBAHAN: Dikecilkan dari 1.25rem**
-  const FONT_WEIGHT_USERNAME = 800; // **PERUBAHAN: Boldness tetap 800**
+  const FONT_SIZE_USERNAME_HEADER = "1.25rem";
+  const FONT_SIZE_USERNAME_CAPTION = "1.1rem";
+  const FONT_WEIGHT_USERNAME = 800;
 
   const cardStyle = {
     border: "none",
@@ -139,16 +124,12 @@ function PostCard({ post, profile, onView, onEdit, onDelete, currentUserId }) {
     border: "none",
   };
 
-  // START PERUBAHAN UTAMA: Menghapus maxHeight dan minHeight dan mengubah objectFit
   const imageStyle = {
     width: "100%",
-    // maxHeight: "700px", // DIHAPUS
-    // minHeight: "300px", // DIHAPUS
-    objectFit: "contain", // DIUBAH: Menggunakan 'contain' agar gambar menyesuaikan diri tanpa terpotong
+    objectFit: "contain",
     backgroundColor: "#f0f2f5",
     borderBottom: "none",
   };
-  // END PERUBAHAN UTAMA
 
   const postActionsContainerStyle = {
     paddingTop: "12px",
@@ -175,7 +156,6 @@ function PostCard({ post, profile, onView, onEdit, onDelete, currentUserId }) {
   const commentIconDynamicStyle = {
     ...iconBaseStyle,
     cursor: "pointer",
-    // **PERUBAHAN: Warna default ikon komentar lebih muted (TEXT_SECONDARY_LIGHT)**
     color: COMMENT_ICON_COLOR,
   };
 
@@ -183,7 +163,7 @@ function PostCard({ post, profile, onView, onEdit, onDelete, currentUserId }) {
     fontSize: "1.05rem",
     fontWeight: 700,
     color: TEXT_PRIMARY_DARK,
-    marginBottom: "4px", // **PERUBAHAN: Dikecilkan dari 8px agar caption lebih dekat**
+    marginBottom: "4px",
     paddingLeft: "25px",
     paddingRight: "25px",
   };
@@ -195,8 +175,8 @@ function PostCard({ post, profile, onView, onEdit, onDelete, currentUserId }) {
   };
 
   const usernameDescriptionStyle = {
-    fontSize: FONT_SIZE_USERNAME_CAPTION, // **PERUBAHAN DISINI (Dikecilkan)**
-    fontWeight: FONT_WEIGHT_USERNAME, // **PERUBAHAN DISINI (BOLD TETAP)**
+    fontSize: FONT_SIZE_USERNAME_CAPTION,
+    fontWeight: FONT_WEIGHT_USERNAME,
     color: TEXT_PRIMARY_DARK,
   };
 
@@ -208,13 +188,9 @@ function PostCard({ post, profile, onView, onEdit, onDelete, currentUserId }) {
       .trim(),
     transition: "color 0.2s ease",
   };
-  // ===============================================
-  // END: Aesthetic Enhancements
-  // ===============================================
 
   return (
     <div className="card post-card-fancy" style={cardStyle}>
-      {/* Header Post (User Info) */}
       <div
         className="d-flex justify-content-between post-header"
         style={headerStyle}
@@ -255,7 +231,7 @@ function PostCard({ post, profile, onView, onEdit, onDelete, currentUserId }) {
                 (e.currentTarget.style.backgroundColor = "transparent")
               }
             >
-              <i className="bi bi-three-dots"></i>{" "}
+              <i className="bi bi-three-dots"></i>
             </button>
           )}
 
@@ -267,7 +243,7 @@ function PostCard({ post, profile, onView, onEdit, onDelete, currentUserId }) {
               {onEdit && (
                 <li>
                   <button className="dropdown-item" onClick={onEdit}>
-                    <i className="bi bi-pencil-square me-2 text-primary"></i>{" "}
+                    <i className="bi bi-pencil-square me-2 text-primary"></i>
                     Ubah Postingan
                   </button>
                 </li>
@@ -292,7 +268,6 @@ function PostCard({ post, profile, onView, onEdit, onDelete, currentUserId }) {
         </div>
       </div>
 
-      {/* Gambar Postingan */}
       <div className="post-image-container">
         <img
           src={
@@ -306,12 +281,10 @@ function PostCard({ post, profile, onView, onEdit, onDelete, currentUserId }) {
       </div>
 
       <div className="card-body p-0 pt-3">
-        {/* Aksi (Like & Comment) */}
         <div
           className="d-flex justify-content-start align-items-center post-actions"
           style={postActionsContainerStyle}
         >
-          {/* Tombol Like */}
           <i
             className={`
               ${isLiked ? "bi bi-heart-fill" : "bi bi-heart"}
@@ -322,7 +295,7 @@ function PostCard({ post, profile, onView, onEdit, onDelete, currentUserId }) {
             title={isOwnPost ? "Tidak dapat menyukai postingan sendiri" : ""}
             onMouseOver={(e) => {
               if (!isOwnPost) e.currentTarget.style.transform = "scale(1.15)";
-              e.currentTarget.style.color = LIKE_ICON_COLOR; // Warna selalu merah saat hover
+              e.currentTarget.style.color = LIKE_ICON_COLOR;
             }}
             onMouseOut={(e) => {
               if (!isOwnPost) e.currentTarget.style.transform = "scale(1)";
@@ -332,15 +305,14 @@ function PostCard({ post, profile, onView, onEdit, onDelete, currentUserId }) {
             }}
           ></i>
 
-          {/* Ikon Komentar - **PERUBAHAN: Menggunakan ikon outline** */}
           <i
-            className="bi bi-chat-text cursor-pointer" // Menggunakan bi-chat-text (outline)
+            className="bi bi-chat-text cursor-pointer"
             onClick={handleCommentClick}
             style={commentIconDynamicStyle}
             title="Lihat Komentar"
             onMouseOver={(e) => {
               e.currentTarget.style.transform = "scale(1.15)";
-              e.currentTarget.style.color = PRIMARY_COLOR_BLUE; // Warna biru saat hover
+              e.currentTarget.style.color = PRIMARY_COLOR_BLUE;
             }}
             onMouseOut={(e) => {
               e.currentTarget.style.transform = "scale(1)";
@@ -349,18 +321,15 @@ function PostCard({ post, profile, onView, onEdit, onDelete, currentUserId }) {
           ></i>
         </div>
 
-        {/* Like Count */}
         <p className="fw-bold mb-3" style={likeCountStyle}>
           <span style={{ color: LIKE_ICON_COLOR, marginRight: "3px" }}>
             {likeCount}
-          </span>{" "}
+          </span>
           Suka
         </p>
 
-        {/* Deskripsi - **PERUBAHAN: Padding bawah di div agar caption naik** */}
         <div style={{ padding: "0 25px 25px 25px" }}>
           <p className="card-text mb-1" style={descriptionTextStyle}>
-            {/* Username di Deskripsi */}
             <span className="me-2" style={usernameDescriptionStyle}>
               {username}
             </span>
@@ -397,3 +366,44 @@ function PostCard({ post, profile, onView, onEdit, onDelete, currentUserId }) {
 }
 
 export default PostCard;
+
+/*
+ * Dokumentasi Kode
+ *
+ * PostCard adalah komponen fungsional React yang merepresentasikan tampilan satu kiriman (post) dalam bentuk kartu yang estetik (fancy card).
+ * Komponen ini menangani tampilan data post, interaksi seperti Like, dan menu opsi (Edit/Hapus) untuk post milik pengguna sendiri.
+ *
+ * Dependencies:
+ * - React, useState, useEffect: Hook standar React.
+ * - formatDate: Fungsi helper untuk memformat tanggal.
+ * - useNavigate: Hook dari react-router-dom untuk navigasi.
+ * - asyncLikePost: Action Redux untuk mengirimkan permintaan like/unlike ke API.
+ * - useDispatch: Hook Redux untuk mendapatkan fungsi dispatch.
+ *
+ * Props:
+ * - post: Objek data kiriman, harus mencakup `id`, `description`, `cover`, `created_at`, `user` (atau `author`), dan `likes`.
+ * - profile: Objek data profil pengguna yang sedang login (digunakan untuk menentukan apakah post sudah disukai dan untuk otorisasi).
+ * - onView: Fungsi callback yang dipanggil ketika link "lebih lanjut" diklik (biasanya untuk melihat detail post).
+ * - onEdit: Fungsi callback yang dipanggil ketika tombol "Ubah Postingan" diklik.
+ * - onDelete: Fungsi callback yang dipanggil ketika tombol "Hapus Postingan" diklik.
+ * - currentUserId: (Dideklarasikan tetapi tidak digunakan secara eksplisit, otorisasi diurus oleh `profile?.id`).
+ *
+ * State Lokal:
+ * - isLiked: Boolean, menunjukkan apakah post saat ini disukai oleh pengguna yang sedang login.
+ * - likeCount: Integer, jumlah total suka pada post.
+ *
+ * Logic:
+ * 1. Otorisasi (`isOwnPost`): Menentukan apakah post ini milik pengguna yang sedang login, dengan memeriksa `post.user.id`, `post.author.id`, atau `post.user_id` terhadap `profile.id`.
+ * 2. `useEffect`: Memastikan `isLiked` dan `likeCount` diperbarui setiap kali data post (`post.likes`) atau profil pengguna berubah.
+ * 3. `handleLike`: Menangani logika Like/Unlike secara lokal (mengubah state `isLiked` dan `likeCount`) dan mengirimkan action Redux (`asyncLikePost`) untuk memperbarui status di backend. Like pada postingan sendiri dicegah.
+ * 4. `handleCommentClick`: Mengarahkan pengguna ke halaman detail post (`/posts/{id}`) yang biasanya juga tempat untuk melihat/menambah komentar.
+ * 5. Deskripsi: Memotong deskripsi jika lebih panjang dari 150 karakter dan menambahkan link "lebih lanjut" yang memicu prop `onView`.
+ *
+ * Styling:
+ * - Sejumlah konstanta digunakan untuk warna dan ukuran font untuk memberikan estetika yang konsisten.
+ * - Menggunakan style inline untuk mengatur tampilan kartu yang modern (`cardStyle`), avatar profil (`profileAvatarStyle`), dan ikon interaksi.
+ * - Gambar post menggunakan `objectFit: "contain"` untuk memastikan seluruh gambar terlihat di dalam container tanpa terpotong (perubahan utama dari kode asli).
+ * - Ikon Like dan Komentar memiliki efek hover yang halus (`scale(1.15)`).
+ * - Ikon Komentar menggunakan varian *outline* (`bi-chat-text`).
+ * - Jumlah like ditampilkan dengan penekanan warna merah oranye (`LIKE_ICON_COLOR`).
+ */

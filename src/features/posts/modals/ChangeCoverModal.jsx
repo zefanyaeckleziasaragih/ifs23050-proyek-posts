@@ -40,23 +40,19 @@ function ChangeCoverModal({ show, onClose, post }) {
     }
   }, [isPostChangeCover]);
 
-  // Fungsi save
   function handleSave() {
-    // Validation
     if (!fileCover) {
       showErrorDialog("Pilih file cover terlebih dahulu!");
       return;
     }
 
-    // Check file type
     if (!fileCover.type.startsWith("image/")) {
       showErrorDialog("Hanya file gambar yang diperbolehkan!");
       setFileCover(null);
       return;
     }
 
-    // Check file size (example: limit to 5MB)
-    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+    const MAX_FILE_SIZE = 5 * 1024 * 1024;
     if (fileCover.size > MAX_FILE_SIZE) {
       showErrorDialog("Ukuran file terlalu besar. Maksimal 5MB");
       setFileCover(null);
@@ -152,3 +148,63 @@ function ChangeCoverModal({ show, onClose, post }) {
 }
 
 export default ChangeCoverModal;
+
+/*
+ * Dokumentasi Kode
+ *
+ * ChangeCoverModal adalah komponen modal (pop-up) yang digunakan untuk mengubah gambar cover dari sebuah post tertentu.
+ * Komponen ini menggunakan `framer-motion` untuk animasi dan Redux untuk mengelola status pengiriman perubahan cover ke API.
+ *
+ * Dependencies:
+ * - motion, AnimatePresence dari "framer-motion": Untuk animasi masuk dan keluar modal.
+ * - useEffect, useState dari "react": Hook standar React.
+ * - showErrorDialog: Fungsi helper untuk menampilkan notifikasi kesalahan.
+ * - useDispatch, useSelector dari "react-redux": Untuk interaksi dengan Redux store.
+ * - asyncSetIsPostChangeCover, asyncSetPost, setIsPostChangeCoverActionCreator, setIsPostChangedActionCreator: Action Redux terkait post.
+ *
+ * Props:
+ * - show: Boolean, mengontrol visibilitas modal.
+ * - onClose: Fungsi callback untuk menutup modal.
+ * - post: Objek data post yang covernya akan diubah (harus memiliki properti `id`).
+ *
+ * State:
+ * - Redux State:
+ * - isPostChangeCover: Boolean, menandai apakah proses penggantian cover sedang berjalan.
+ * - isPostChangedCover: Boolean, menandai apakah penggantian cover berhasil.
+ * - Local State:
+ * - loading: Boolean, mengontrol status tombol "Simpan" (menampilkan spinner saat true).
+ * - fileCover: Objek File, menyimpan file gambar cover baru yang dipilih oleh pengguna.
+ *
+ * Lifecycle Hooks:
+ *
+ * 1. Efek Kontrol Overflow Body (Dependensi: `[show]`):
+ * - Mengatur `document.body.style.overflow` menjadi "hidden" saat modal tampil untuk mencegah scrolling di belakang modal.
+ * - Mengatur ulang ke "auto" saat modal ditutup.
+ *
+ * 2. Efek Penanganan Status Penggantian Cover (Dependensi: `[isPostChangeCover]`):
+ * - Dijalankan setelah operasi penggantian cover di Redux selesai (`isPostChangeCover` menjadi true).
+ * - Mengatur ulang `isPostChangeCover` di Redux.
+ * - Jika `isPostChangedCover` true (berhasil):
+ * - Mengatur ulang `isPostChangedActionCreator`.
+ * - Mengatur `loading` menjadi false.
+ * - Mendispatch `asyncSetPost(post.id)` untuk memuat ulang data post yang diperbarui dari API.
+ * - Menutup modal (`onClose()`).
+ * - Jika gagal, hanya mengatur `loading` menjadi false.
+ *
+ * Fungsi handleSave():
+ * - Fungsi yang dipanggil saat tombol Simpan diklik.
+ * - Melakukan validasi file:
+ * - Memastikan file telah dipilih.
+ * - Memeriksa apakah tipe file adalah gambar (`image/*`).
+ * - Memeriksa ukuran file (maksimal 5MB).
+ * - Jika validasi gagal, menampilkan `showErrorDialog` dan mengatur ulang `fileCover`.
+ * - Jika validasi berhasil:
+ * - Mengatur `loading` menjadi true.
+ * - Mendispatch `asyncSetIsPostChangeCover` dengan `post.id` dan `fileCover` untuk memulai proses unggah/penggantian cover.
+ *
+ * Rendering:
+ * - Menggunakan `AnimatePresence` dan `motion.div` untuk animasi modal (fade dan spring-like slide).
+ * - Menampilkan formulir dengan input `type="file"` yang hanya menerima file gambar (`accept="image/*"`).
+ * - Tombol "Simpan" menampilkan spinner loading ketika `loading` true, dan tombol aktif yang memanggil `handleSave` ketika false.
+ * - Mengembalikan `null` jika objek `post` belum tersedia.
+ */

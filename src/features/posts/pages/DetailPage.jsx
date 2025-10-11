@@ -1,4 +1,3 @@
-// DetailPage.jsx
 import { useSelector, useDispatch } from "react-redux";
 import "../resources/custom.css";
 import { useNavigate, useParams } from "react-router-dom";
@@ -21,29 +20,24 @@ function DetailPage() {
   const [newComment, setNewComment] = useState("");
   const [fadeIn, setFadeIn] = useState(false);
 
-  // Ambil data dari reducer
   const profile = useSelector((state) => state.profile);
   const post = useSelector((state) => state.post);
   const isPost = useSelector((state) => state.isPost);
 
-  // Efek Fade In
   useEffect(() => {
     setFadeIn(true);
   }, []);
 
-  // 1. Ambil data post sesuai postId
   useEffect(() => {
     if (postId) {
       dispatch(asyncSetPost(postId));
     }
   }, [postId, dispatch]);
 
-  // Periksa apakah pengabilan data post sudah selesai
   useEffect(() => {
     if (isPost) {
       dispatch(setIsPostActionCreator(false));
       if (!post) {
-        // Navigasi ke home jika post tidak ditemukan
         navigate("/");
       }
     }
@@ -54,16 +48,12 @@ function DetailPage() {
     if (!newComment.trim()) return;
 
     try {
-      // Logic Post Comment UTUH
       dispatch(asyncPostComment(postId, profile.name + ": " + newComment));
 
-      // Refresh post data to get updated comments
-      // Tunggu sebentar sebelum refresh untuk memberi waktu API
       setTimeout(() => {
         dispatch(asyncSetPost(postId));
       }, 500);
 
-      // Clear the input
       setNewComment("");
     } catch (error) {
       console.error("Error posting comment:", error);
@@ -78,10 +68,8 @@ function DetailPage() {
     confirmDelete.then((result) => {
       if (result.isConfirmed) {
         try {
-          // Logic Delete Comment UTUH
           dispatch(asyncDeleteComment(postId, commentId));
 
-          // Refresh post data to get updated comments
           setTimeout(() => {
             dispatch(asyncSetPost(postId));
           }, 500);
@@ -94,28 +82,21 @@ function DetailPage() {
 
   if (!profile || !post) return;
 
-  // Variabel untuk mengecek apakah user saat ini adalah pemilik post
   const isPostOwner =
     String(post.created_by) === String(profile.id) ||
     String(post.author?.id) === String(profile.id) ||
     String(post.user_id) === String(profile.id);
 
-  // Konstanta Warna dan Estetika dari HomePage
-  const PRIMARY_COLOR = "#667eea"; // Ungu Muda
-  const SECONDARY_COLOR = "#764ba2"; // Ungu Tua
-  const ACCENT_COLOR = "#f58529"; // Oranye (dari gradient tombol Home)
+  const PRIMARY_COLOR = "#667eea";
+  const SECONDARY_COLOR = "#764ba2";
+  const ACCENT_COLOR = "#f58529";
   const GRADIENT_BG =
-    "linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)"; // Gradien Penuh dari HomePage
+    "linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)";
 
-  // ⭐️ FUNGSI UTAMA YANG DIPERBAIKI
-  // Fungsi ini dipanggil saat ChangeCoverModal ditutup.
   const handleCoverModalClose = (coverUpdated) => {
     setShowChangeCoverModal(false);
 
-    // Asumsi: ChangeCoverModal mengirimkan 'true' jika cover berhasil diupdate.
     if (coverUpdated === true) {
-      // Panggil asyncSetPost untuk mengambil data post terbaru dari API
-      // Penundaan 300ms untuk memastikan proses update selesai dan re-render terjadi.
       setTimeout(() => {
         dispatch(asyncSetPost(postId));
       }, 300);
@@ -124,7 +105,6 @@ function DetailPage() {
 
   return (
     <>
-      {/* Style CSS Konsisten dengan HomePage (TIDAK DIUBAH) */}
       <style>
         {`
           @keyframes fadeInUp {
@@ -137,7 +117,7 @@ function DetailPage() {
               transform: translateY(0);
             }
           }
-          @keyframes floatAnimation { /* Tambah animasi float dari HomePage */
+          @keyframes floatAnimation { 
             0%, 100% { transform: translateY(0px) scale(1); }
             50% { transform: translateY(-5px) scale(1.01); }
           }
@@ -160,14 +140,14 @@ function DetailPage() {
             transform: translateY(-1px);
             transition: all 0.3s ease;
           }
-          .hover-scale-detail { /* Ubah nama class agar tidak menimpa */
+          .hover-scale-detail { 
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           }
           .hover-scale-detail:hover {
             transform: scale(1.005) translateY(-3px) !important;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15) !important;
           }
-          .post-content-container { /* Style baru untuk kontainer tengah */
+          .post-content-container { 
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(8px);
             border-radius: 24px;
@@ -177,18 +157,16 @@ function DetailPage() {
         `}
       </style>
 
-      {/* Kontainer Utama dengan Full Screen Background Gradien dari HomePage (TIDAK DIUBAH) */}
       <div
         style={{
           minHeight: "100vh",
           padding: 0,
-          background: GRADIENT_BG, // Menggunakan BG Gradien Penuh
+          background: GRADIENT_BG,
           transition: "opacity 0.6s ease",
           opacity: fadeIn ? 1 : 0,
-          paddingTop: "90px", // Ruang untuk fixed Navbar
+          paddingTop: "90px",
         }}
       >
-        {/* Animated Background Circles (TIDAK DIUBAH) */}
         <div
           style={{
             position: "fixed",
@@ -218,7 +196,6 @@ function DetailPage() {
           }}
         />
 
-        {/* Main Content Container (TIDAK DIUBAH) */}
         <div
           className="main-content"
           style={{ position: "relative", zIndex: 10, paddingBottom: "40px" }}
@@ -227,7 +204,6 @@ function DetailPage() {
             className="container-fluid"
             style={{ maxWidth: 800, margin: "0 auto", padding: "0 15px" }}
           >
-            {/* Header Postingan (TIDAK DIUBAH) */}
             <div
               className="d-flex justify-content-between align-items-center mb-4"
               style={{ animation: "fadeInUp 0.6s ease-out" }}
@@ -242,17 +218,14 @@ function DetailPage() {
               >
                 <i
                   className="bi bi-card-heading me-3"
-                  // ✅ PERBAIKAN: Ganti warna ikon menjadi putih
                   style={{ color: "#FFFFFF" }}
                 ></i>
                 Detail Postingan
               </h1>
             </div>
-            {/* Garis pemisah aesthetic (TIDAK DIUBAH) */}
             <div
               style={{
                 height: "4px",
-                // ✅ PERBAIKAN: Ganti warna gradien garis menjadi Putih ke Transparan/Putih
                 background: `linear-gradient(90deg, #FFFFFF, rgba(255, 255, 255, 0.5))`,
                 borderRadius: "5px",
                 marginBottom: "30px",
@@ -260,7 +233,6 @@ function DetailPage() {
               }}
             />
             <div className="post-content-container">
-              {/* Kartu Postingan Utama (TIDAK DIUBAH) */}
               <div
                 className="card mb-5 hover-scale-detail"
                 style={{
@@ -290,7 +262,6 @@ function DetailPage() {
                       }}
                     />
 
-                    {/* Tombol Ganti Cover (Hanya untuk pemilik) */}
                     {isPostOwner && (
                       <button
                         className="btn btn-sm text-white gradient-button"
@@ -311,7 +282,6 @@ function DetailPage() {
                   </div>
                 ) : (
                   isPostOwner && (
-                    // Tombol Tambah Cover jika belum ada
                     <div
                       className="p-4 bg-light text-center"
                       style={{
@@ -361,7 +331,6 @@ function DetailPage() {
                 </div>
               </div>
 
-              {/* Comments Section (TIDAK DIUBAH) */}
               <div
                 className="card mb-4"
                 style={{
@@ -386,7 +355,6 @@ function DetailPage() {
                   {post.comments?.length || 0} Komentar
                 </div>
 
-                {/* List Komentar (TIDAK DIUBAH) */}
                 <div
                   className="list-group list-group-flush"
                   style={{ maxHeight: "60vh", overflowY: "auto" }}
@@ -414,7 +382,6 @@ function DetailPage() {
                       >
                         <div className="d-flex justify-content-between align-items-center">
                           <div className="flex-grow-1 me-3">
-                            {/* JANGAN GANGGU KOMENTAR - Tetap tampilkan teks komentar yang sudah mengandung nama pengguna */}
                             <p
                               className="mb-1"
                               style={{ fontWeight: 500, color: "#222" }}
@@ -429,7 +396,6 @@ function DetailPage() {
                             </small>
                           </div>
 
-                          {/* Tombol Delete (Pertahankan Fungsionalitas) */}
                           <button
                             className="btn btn-sm btn-outline-danger ms-2"
                             onClick={() => handleDeleteComment(comment.id)}
@@ -444,7 +410,6 @@ function DetailPage() {
                 </div>
               </div>
 
-              {/* Input Komentar Baru (TIDAK DIUBAH) */}
               <div
                 className="card"
                 style={{
@@ -486,16 +451,13 @@ function DetailPage() {
                   </form>
                 </div>
               </div>
-            </div>{" "}
-            {/* Penutup post-content-container */}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Modal */}
       <ChangeCoverModal
         show={showChangeCoverModal}
-        // ⭐️ PERBAIKAN: Mengganti fungsi inline dengan fungsi handleCoverModalClose yang baru
         onClose={handleCoverModalClose}
         post={post}
       />
@@ -504,3 +466,69 @@ function DetailPage() {
 }
 
 export default DetailPage;
+
+/*
+ * Dokumentasi Kode
+ *
+ * DetailPage adalah komponen halaman yang menampilkan detail post, memungkinkan pemilik post untuk mengganti cover, serta memfasilitasi penambahan dan penghapusan komentar.
+ *
+ * Dependencies:
+ * - useSelector, useDispatch dari "react-redux": Untuk interaksi dengan Redux store.
+ * - useNavigate, useParams dari "react-router-dom": Untuk navigasi dan mengambil parameter rute (`postId`).
+ * - useState, useEffect dari "react": Hook standar React.
+ * - asyncSetPost, setIsPostActionCreator, asyncPostComment, asyncDeleteComment: Action Redux untuk post dan komentar.
+ * - formatDate, showConfirmDialog: Helper untuk memformat tanggal dan menampilkan dialog konfirmasi.
+ * - ChangeCoverModal: Komponen modal untuk mengganti cover post.
+ *
+ * State:
+ * - Redux State:
+ * - profile: Data profil pengguna yang sedang login.
+ * - post: Objek post yang sedang dilihat, termasuk daftar komentarnya (diambil berdasarkan `postId`).
+ * - isPost: Boolean, flag yang menunjukkan status proses pengambilan data post.
+ * - Local State:
+ * - showChangeCoverModal: Boolean, mengontrol visibilitas modal ganti cover.
+ * - newComment: String, menyimpan input komentar baru.
+ * - fadeIn: Boolean, mengontrol efek transisi fade-in halaman.
+ *
+ * Lifecycle Hooks (useEffect):
+ *
+ * 1. Efek Fade In (Dependensi: `[]`):
+ * - Mengatur `fadeIn` menjadi true setelah render awal untuk memulai animasi fade-in halaman.
+ *
+ * 2. Pemuatan Post (Dependensi: `[postId, dispatch]`):
+ * - Dijalankan saat komponen dimuat atau `postId` berubah.
+ * - Mendispatch `asyncSetPost(postId)` untuk mengambil data post spesifik.
+ *
+ * 3. Validasi Post dan Navigasi (Dependensi: `[isPost, post, navigate, dispatch]`):
+ * - Dijalankan setelah status `isPost` (status pengambilan post) berubah menjadi true.
+ * - Mengatur ulang `isPost` di Redux.
+ * - Jika data `post` tidak ditemukan (misalnya, post telah dihapus), pengguna diarahkan ke halaman beranda (`/`).
+ *
+ * Fungsi handleSubmitComment(e):
+ * - Menangani pengiriman form komentar baru.
+ * - Memastikan input komentar tidak kosong.
+ * - Mendispatch `asyncPostComment` dengan menambahkan nama pengguna ke konten komentar.
+ * - Menggunakan `setTimeout` (500ms) untuk memberi waktu API memproses, lalu memuat ulang data post (`asyncSetPost`) untuk memperbarui daftar komentar.
+ * - Mengosongkan input `newComment`.
+ *
+ * Fungsi handleDeleteComment(commentId):
+ * - Menangani permintaan penghapusan komentar.
+ * - Menampilkan `showConfirmDialog` untuk konfirmasi pengguna.
+ * - Jika dikonfirmasi, mendispatch `asyncDeleteComment`.
+ * - Menggunakan `setTimeout` (500ms) untuk memberi waktu API memproses, lalu memuat ulang data post (`asyncSetPost`) untuk memperbarui daftar komentar.
+ *
+ * Fungsi handleCoverModalClose(coverUpdated):
+ * - Dipanggil saat `ChangeCoverModal` ditutup.
+ * - Mengatur `showChangeCoverModal` menjadi false.
+ * - Jika `coverUpdated` bernilai true (modal menandakan cover berhasil diubah), maka `asyncSetPost` dipanggil setelah penundaan singkat (300ms) untuk mengambil data post yang diperbarui.
+ *
+ * Variabel isPostOwner:
+ * - Digunakan untuk menentukan apakah pengguna yang sedang login adalah pemilik post, mengizinkan akses ke tombol "Ganti Cover" atau "Tambah Cover". Pengecekan dilakukan terhadap beberapa kemungkinan properti ID pengguna (`created_by`, `author.id`, `user_id`).
+ *
+ * Rendering:
+ * - Menggunakan gaya CSS kustom untuk estetika (gradien latar belakang, animasi fade-in, dll.) yang konsisten dengan desain Home Page.
+ * - Menampilkan cover post (jika ada) dan tombol "Ganti Cover" jika pengguna adalah pemilik post.
+ * - Menampilkan deskripsi post dan info penulis/tanggal.
+ * - Bagian Komentar: Menampilkan jumlah komentar, daftar komentar yang dapat discroll, dan formulir untuk menambahkan komentar baru.
+ * - Menggunakan komponen `ChangeCoverModal` untuk fungsi penggantian cover.
+ */

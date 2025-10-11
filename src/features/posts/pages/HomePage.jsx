@@ -1,4 +1,3 @@
-// HomePage.jsx
 import { useSelector, useDispatch } from "react-redux";
 import "../resources/custom.css";
 import { useNavigate } from "react-router-dom";
@@ -24,10 +23,8 @@ function HomePage() {
   const posts = useSelector((state) => state.posts);
   const isPostDeleted = useSelector((state) => state.isPostDeleted);
 
-  // internal filter kept for compatibility
   const [filter, changeFilter] = useState("");
-  const [ownerFilter, changeOwnerFilter] = useState("all"); // "all" | "mine"
-
+  const [ownerFilter, changeOwnerFilter] = useState("all");
   const [showAddModal, setShowAddModal] = useState(false);
   const [showChangeModal, setShowChangeModal] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState(null);
@@ -92,19 +89,15 @@ function HomePage() {
     setShowChangeModal(true);
   }
 
-  // Definisikan kembali konstanta CSS dari LoginPage agar konsisten
   const GRADIENT_BG =
-    "linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)"; // Mengambil gradien dari LoginPage
+    "linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)";
   const PRIMARY_COLOR = "#667eea";
   const ACCENT_COLOR = "#764ba2";
 
-  // ✅ PENTING: Tentukan lebar sidebar Anda di sini
   const SIDEBAR_WIDTH = "250px";
-  // Anda harus mengganti '250px' dengan lebar sidebar aplikasi Anda yang sesungguhnya.
 
   return (
     <>
-      {/* Tambahkan Style Global untuk Animasi Konsisten */}
       <style>
         {`
           @keyframes floatAnimation {
@@ -135,8 +128,6 @@ function HomePage() {
         `}
       </style>
 
-      {/* Kontainer Utama dengan Full Screen Background */}
-      {/* ✅ PERBAIKAN: Gunakan width: 100vw untuk memastikan full screen, dan sembunyikan overflow horizontal */}
       <div
         style={{
           minHeight: "100vh",
@@ -144,11 +135,10 @@ function HomePage() {
           background: GRADIENT_BG,
           transition: "opacity 0.6s ease",
           opacity: fadeIn ? 1 : 0,
-          width: "100vw", // PENTING: Memastikan mengambil seluruh lebar viewport
-          overflowX: "hidden", // PENTING: Mencegah scroll horizontal (garis putih)
+          width: "100vw",
+          overflowX: "hidden",
         }}
       >
-        {/* Animated Background Circles (tetap fixed) */}
         <div
           style={{
             position: "fixed",
@@ -178,30 +168,23 @@ function HomePage() {
           }}
         />
 
-        {/* Main Content Container */}
         <div
           className="main-content"
           style={{
             position: "relative",
             zIndex: 10,
-            // ✅ PERBAIKAN UTAMA: Geser konten ke kanan sebesar lebar sidebar
             marginLeft: SIDEBAR_WIDTH,
-            // ✅ PERBAIKAN UTAMA: Pastikan lebar mengambil seluruh sisa layar
             width: `calc(100vw - ${SIDEBAR_WIDTH})`,
           }}
         >
           <div
             className="container-fluid pt-5 pb-5"
             style={{
-              // ✅ MODIFIKASI: Hapus maxWidth, biarkan width: 100% dari parent (main-content)
-              // Jika Anda tetap ingin membatasi lebar konten:
               maxWidth: 1000,
-              margin: "0 auto", // Tetap menggunakan auto untuk memusatkan
-              // Tambahkan padding yang cukup di kiri (jarak dari sidebar) dan kanan
+              margin: "0 auto",
               padding: "0 50px",
             }}
           >
-            {/* ... Kontrol Post dan Filter ... */}
             <div className="row mb-5">
               <div className="col-12">
                 <div
@@ -222,7 +205,6 @@ function HomePage() {
                     className="card-body d-flex flex-column flex-md-row align-items-md-center justify-content-md-between"
                     style={{ padding: "2.5rem" }}
                   >
-                    {/* Statistik Jumlah Post */}
                     <div className="mb-4 mb-md-0 text-center text-md-start">
                       <h5
                         style={{
@@ -259,7 +241,6 @@ function HomePage() {
                       </p>
                     </div>
 
-                    {/* Kontrol Tampilkan + Tombol Tambah */}
                     <div style={{ minWidth: 280 }}>
                       <div className="mb-4">
                         <label
@@ -327,7 +308,6 @@ function HomePage() {
               </div>
             </div>
 
-            {/* ===== AREA DAFTAR POST ===== */}
             <div
               className="row justify-content-center"
               style={{
@@ -438,3 +418,66 @@ function HomePage() {
 }
 
 export default HomePage;
+
+/*
+ * Dokumentasi Kode
+ *
+ * HomePage adalah komponen utama yang menampilkan daftar postingan (timeline) kepada pengguna. Komponen ini menyediakan fungsionalitas untuk memfilter postingan, membuat postingan baru, serta mengedit dan menghapus postingan milik pengguna.
+ *
+ * Dependencies:
+ * - useSelector, useDispatch dari "react-redux": Untuk mengelola state global (profil, daftar post).
+ * - useNavigate dari "react-router-dom": Untuk navigasi antar halaman (misalnya, ke halaman detail post).
+ * - useState, useEffect dari "react": Untuk state lokal dan side effects.
+ * - AddModal, ChangeModal: Komponen modal untuk menambah dan mengedit post.
+ * - asyncSetIsPostDelete, asyncSetPosts, setIsPostDeleteActionCreator: Action Redux untuk manipulasi dan pengambilan data post.
+ * - showConfirmDialog, showSuccessDialog: Helper untuk notifikasi UI.
+ * - PostCard: Komponen untuk menampilkan setiap post dalam daftar.
+ *
+ * State:
+ * - Redux State:
+ * - profile: Data profil pengguna yang sedang login.
+ * - posts: Array daftar postingan yang diambil dari API.
+ * - isPostDeleted: Boolean, flag yang menjadi true setelah post berhasil dihapus, memicu refresh.
+ * - Local State:
+ * - filter: String, filter internal (saat ini tidak digunakan secara langsung pada tampilan).
+ * - ownerFilter: String, filter untuk membatasi post yang ditampilkan ("all" atau "mine").
+ * - showAddModal: Boolean, mengontrol visibilitas modal tambah post.
+ * - showChangeModal: Boolean, mengontrol visibilitas modal ubah post.
+ * - selectedPostId: String/Number, ID post yang dipilih untuk diubah.
+ * - fadeIn: Boolean, mengontrol efek transisi fade-in halaman.
+ *
+ * Lifecycle Hooks (useEffect):
+ *
+ * 1. Efek Fade In (Dependensi: `[]`):
+ * - Mengatur `fadeIn` menjadi true setelah render awal untuk memulai animasi fade-in halaman.
+ *
+ * 2. Ambil Post (Dependensi: `[filter]`):
+ * - Dijalankan saat komponen dimuat dan setiap kali `filter` berubah.
+ * - Mendispatch `asyncSetPosts(filter)` untuk memuat daftar post.
+ *
+ * 3. Refresh Setelah Hapus (Dependensi: `[isPostDeleted]`):
+ * - Dijalankan jika `isPostDeleted` menjadi true (setelah post berhasil dihapus).
+ * - Mengatur ulang `isPostDeleted` menjadi false dan mendispatch `asyncSetPosts` untuk memuat ulang daftar post yang diperbarui.
+ *
+ * Fungsi isPostCreatedByMe(post):
+ * - Fungsi helper untuk membandingkan ID atau username pengguna yang sedang login (`profile`) dengan berbagai kemungkinan ID/username penulis post (`post`).
+ * - Digunakan untuk menentukan apakah pengguna dapat mengedit/menghapus post tersebut.
+ *
+ * Fungsi handleDeletePost(postId):
+ * - Menampilkan dialog konfirmasi.
+ * - Jika dikonfirmasi, mendispatch `asyncSetIsPostDelete(postId)` untuk memicu proses penghapusan.
+ *
+ * Fungsi handleEditPost(postId):
+ * - Menyimpan ID post yang akan diubah ke `selectedPostId`.
+ * - Menampilkan `ChangeModal`.
+ *
+ * Variabel displayedPosts:
+ * - Daftar post yang telah difilter berdasarkan `ownerFilter` ("mine" atau "all").
+ *
+ * Rendering dan Tata Letak:
+ * - Menggunakan background gradien layar penuh yang konsisten.
+ * - Konten utama digeser ke kanan menggunakan `marginLeft: SIDEBAR_WIDTH` dan lebarnya diatur menggunakan `width: calc(100vw - ${SIDEBAR_WIDTH})` untuk menyesuaikan dengan sidebar (yang diasumsikan diimplementasikan terpisah dengan lebar `250px`).
+ * - Menampilkan ringkasan jumlah post dan kontrol filter/tombol "Buat Post Baru".
+ * - Iterasi melalui `displayedPosts` untuk merender setiap `PostCard`, memberikan prop `isOwner` serta fungsi `onView`, `onEdit`, dan `onDelete` yang sesuai.
+ * - Menggunakan `AddModal` dan `ChangeModal` untuk interaksi penambahan dan pengubahan post.
+ */

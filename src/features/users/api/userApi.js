@@ -82,6 +82,26 @@ const userApi = (() => {
     return message;
   }
 
+  async function putProfileEmail(email, password) {
+    const response = await apiHelper.fetchData(_url("/email"), {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email, // Email baru
+        password, // Password lama untuk verifikasi
+      }),
+    });
+
+    const { success, message, data } = await response.json();
+    if (!success) {
+      throw new Error(message);
+    }
+
+    return data.user; // Asumsi API mengembalikan data pengguna yang diperbarui
+  }
+
   async function putProfilePassword(password, new_password) {
     const response = await apiHelper.fetchData(_url("/password"), {
       method: "PUT",
@@ -108,6 +128,7 @@ const userApi = (() => {
     getProfile,
     putProfile,
     postProfilePhoto,
+    putProfileEmail,
     putProfilePassword,
   };
 })();

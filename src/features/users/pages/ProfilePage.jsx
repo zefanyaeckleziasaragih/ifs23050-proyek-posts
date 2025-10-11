@@ -112,6 +112,47 @@ function ProfilePage() {
     }
   };
 
+  const handleChangeEmail = async (e) => {
+    e.preventDefault();
+
+    if (!emailForm.new_email || !emailForm.password_for_email) {
+      return showErrorDialog("Isi Email baru dan Kata Sandi lama.");
+    } // Cek apakah email yang dimasukkan berbeda dengan email saat ini
+
+    if (emailForm.new_email === profile.email) {
+      return showErrorDialog(
+        "Email baru harus berbeda dari email yang sudah ada."
+      );
+    }
+
+    setEmailForm({ ...emailForm, isEmailUpdating: true });
+
+    try {
+      const updatedUser = await userApi.putProfileEmail(
+        emailForm.new_email,
+        emailForm.password_for_email
+      ); // Perbarui state profil & form utama dengan data yang baru
+
+      setProfile(updatedUser);
+      setForm({ name: updatedUser.name || "", email: updatedUser.email || "" });
+
+      showSuccessDialog("Email berhasil diubah!"); // Bersihkan form ganti email
+
+      setEmailForm({
+        new_email: "",
+        password_for_email: "",
+        isEmailUpdating: false,
+      });
+    } catch (err) {
+      console.error("change email error:", err);
+      showErrorDialog(
+        "Gagal mengubah email: " +
+          (err.message || "Password salah atau email sudah terdaftar.")
+      );
+      setEmailForm({ ...emailForm, isEmailUpdating: false });
+    }
+  };
+
   // --- END FUNGSI ---
 
   if (loading) return <div className="text-center mt-5">Memuat profil...</div>;
@@ -295,7 +336,7 @@ function ProfilePage() {
                 Perbarui Data Diri
               </h5>
               <form onSubmit={handleUpdateProfile}>
-                {/* ... Input Name dan Email ... */}
+                {/* Input Name */}
                 <div className="mb-3">
                   <label className="form-label fw-semibold">Nama Lengkap</label>
                   <input
@@ -305,7 +346,9 @@ function ProfilePage() {
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
                   />
                 </div>
-                <div className="mb-4">
+
+                {/* Input Email */}
+                <div className="mb-3">
                   <label className="form-label fw-semibold">Email</label>
                   <input
                     type="email"
@@ -316,6 +359,23 @@ function ProfilePage() {
                     }
                   />
                 </div>
+
+                {/* ✅ INPUT BARU: Password untuk verifikasi Ganti Email */}
+                <div className="mb-4">
+                  <label className="form-label fw-semibold">
+                    Kata Sandi (Hanya diisi jika Anda Mengganti Email)
+                  </label>
+                  <input
+                    type="password"
+                    className="form-control home-input-focus home-input-style"
+                    value={form.password}
+                    onChange={(e) =>
+                      setForm({ ...form, password: e.target.value })
+                    }
+                    placeholder="Diperlukan untuk verifikasi ganti email"
+                  />
+                </div>
+
                 <button
                   type="submit"
                   className="btn w-100 home-btn-gradient"

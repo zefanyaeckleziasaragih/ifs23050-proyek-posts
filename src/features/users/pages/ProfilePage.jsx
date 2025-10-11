@@ -360,22 +360,6 @@ function ProfilePage() {
                   />
                 </div>
 
-                {/* ✅ INPUT BARU: Password untuk verifikasi Ganti Email */}
-                <div className="mb-4">
-                  <label className="form-label fw-semibold">
-                    Kata Sandi (Hanya diisi jika Anda Mengganti Email)
-                  </label>
-                  <input
-                    type="password"
-                    className="form-control home-input-focus home-input-style"
-                    value={form.password}
-                    onChange={(e) =>
-                      setForm({ ...form, password: e.target.value })
-                    }
-                    placeholder="Diperlukan untuk verifikasi ganti email"
-                  />
-                </div>
-
                 <button
                   type="submit"
                   className="btn w-100 home-btn-gradient"

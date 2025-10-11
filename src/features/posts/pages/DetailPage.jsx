@@ -8,6 +8,8 @@ import {
   setIsPostActionCreator,
   asyncPostComment,
   asyncDeleteComment,
+  // ⭐️ Tambahkan asyncChangeCoverPost jika fitur Change Cover memiliki action tersendiri
+  // Jika tidak ada, pastikan modal ChangeCoverModal memanggil action yang benar.
 } from "../states/action";
 import { formatDate, showConfirmDialog } from "../../../helpers/toolsHelper";
 import ChangeCoverModal from "../modals/ChangeCoverModal";
@@ -106,6 +108,20 @@ function DetailPage() {
   const ACCENT_COLOR = "#f58529"; // Oranye (dari gradient tombol Home)
   const GRADIENT_BG =
     "linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)"; // Gradien Penuh dari HomePage
+
+  // ⭐️ FUNGSI BARU/PERBAIKAN: Untuk menutup modal dan me-refresh data
+  const handleCoverModalClose = (coverUpdated) => {
+    setShowChangeCoverModal(false);
+    // Hanya refresh jika update cover berhasil (diasumsikan ChangeCoverModal
+    // memberikan sinyal melalui argumen 'coverUpdated' yang bernilai true)
+    if (coverUpdated) {
+      // Panggil asyncSetPost untuk mengambil data post terbaru dari API
+      // Menunda sebentar untuk memastikan modal sudah tertutup dan API selesai
+      setTimeout(() => {
+        dispatch(asyncSetPost(postId));
+      }, 300); // Penundaan lebih singkat (300ms) untuk respons yang lebih cepat
+    }
+  };
 
   return (
     <>
@@ -480,13 +496,8 @@ function DetailPage() {
       {/* Modal */}
       <ChangeCoverModal
         show={showChangeCoverModal}
-        onClose={() => {
-          setShowChangeCoverModal(false);
-          // Optional: Re-fetch post data after closing modal to ensure updates (if any) are visible
-          setTimeout(() => {
-            dispatch(asyncSetPost(postId));
-          }, 100);
-        }}
+        // ⭐️ PERBAIKAN UTAMA: Menggunakan fungsi handleCoverModalClose yang baru
+        onClose={handleCoverModalClose}
         post={post}
       />
     </>
